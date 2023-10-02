@@ -7,11 +7,12 @@ cliente_discord = discord.Client(intents=discord.Intents.all())
 
 canal_alvo_id = 1158343397279543327
 
-# Dicionário para armazenar as mensagens respondidas
-mensagens_respondidas = {}
-
 # DataFrame para armazenar os dados captados
 dados = pd.DataFrame(columns=['ID do Usuário', 'Nome do Usuário', 'Emoji'])
+
+def salvar_dados():
+    # Exporta os dados para uma planilha Excel
+    dados.to_excel('dados.xlsx', index=False)
 
 @cliente_discord.event
 async def on_ready():
@@ -21,10 +22,6 @@ async def on_ready():
 async def on_message(mensagem):
     # Verifica se a mensagem não foi enviada pelo próprio bot
     if mensagem.author == cliente_discord.user:
-        return
-
-    # Verifica se o bot já respondeu a esta mensagem
-    if mensagem.id in mensagens_respondidas:
         return
 
     if mensagem.channel.id == canal_alvo_id:
@@ -45,16 +42,12 @@ async def on_message(mensagem):
                         id_usuario = mensagem.author.id
                         nome_usuario = mensagem.author.name
                         await mensagem.channel.send(f'O usuário {nome_usuario} com ID {id_usuario} enviou um emoji: {emojis[0]}')
-                        # Adiciona a mensagem ao dicionário de mensagens respondidas
-                        mensagens_respondidas[mensagem.id] = True
                         
                         # Adiciona os dados ao DataFrame
                         dados.loc[len(dados)] = [id_usuario, nome_usuario, emojis[0]]
                         
-                        # Exporta os dados para uma planilha Excel
-                        dados.to_excel('dados.xlsx', index=False)
-                        
-                        return
+                        # Salva os dados na planilha
+                        salvar_dados()
 
 # Inicialização do cliente do Discord com o token de autenticação
-cliente_discord.run('MTA3OTQyNjc5MDY4NDExNDk1NA.GhltlG.76_4XQfLHI8JO2T8wNoL5rLQj-Qi3gGQSfWHPc')
+cliente_discord.run('')
