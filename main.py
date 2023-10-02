@@ -16,6 +16,8 @@ async def on_message(mensagem):
             primeira_linha = linhas[0]
             if primeira_linha.startswith('- **Hj estou') or primeira_linha.startswith('Hj estou:') or primeira_linha.startswith('- Hj estou:'):
                 emoji = primeira_linha.split(':')[-1].strip()
+                if emoji.startswith('**'):
+                    emoji = emoji[2:]
                 await mensagem.channel.send(f'O emoji é {emoji}')
 # Inicialização do cliente do Discord com o token de autenticação
 cliente_discord.run('')
