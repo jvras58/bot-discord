@@ -1,24 +1,51 @@
+# Importação da biblioteca discord
 import discord
+import re
 
+# Criação do cliente do Discord com as permissões necessárias
 cliente_discord = discord.Client(intents=discord.Intents.all())
 
-canal_alvo_id = 1158343397279543327
+# ID do canal que o bot vai monitorar
+canal_alvo_id = 1073372639877419139
 
+# Evento chamado quando o cliente do Discord estiver pronto
 @cliente_discord.event
 async def on_ready():
     print('Logado como {0.user}'.format(cliente_discord))
 
+# Evento chamado quando uma mensagem é recebida
 @cliente_discord.event
 async def on_message(mensagem):
+    if mensagem.content.startswith('/status'):
+        await mensagem.channel.send(
+            'Estou funcionando perfeitamente! Meu status é {0}'.format(
+                cliente_discord.status))
+
     if mensagem.channel.id == canal_alvo_id:
         linhas = mensagem.content.split('\n')
         if len(linhas) == 4:
-            primeira_linha = linhas[0]
-            if primeira_linha.startswith('- **Hj estou') or primeira_linha.startswith('Hj estou:') or primeira_linha.startswith('- Hj estou:'):
-                emoji = primeira_linha.split(':')[-1].strip()
-                await mensagem.channel.send(f'O emoji é {emoji}')
+            prefixos = [
+                '- **Hj estou**: ',
+                '- **Ontem eu**: ',
+                '- **Hj pretendo**: ',
+                '- **Preciso de ajuda com**: '
+            ]
+            # Verificar se a estrutura completa é atendida
+            if all(linha.startswith(prefixo) for linha, prefixo in zip(linhas, prefixos)):
+                await mensagem.channel.send('Esta mensagem segue o padrão!')
+                # Encontrar e enviar emojis
+                emojis = re.findall(r'(:\w+:|<:\w+:\d+>)', mensagem.content)
+                if emojis:
+                    for em in emojis:
+                        await mensagem.channel.send(f'O emoji é {em}')
+            else:
+                # Procurar somente por '- **Hj estou**: '
+                for linha in linhas:
+                    if linha.startswith('- **Hj estou**: '):
+                        await mensagem.channel.send('Esta mensagem segue o padrão parcialmente.')
+                        
 # Inicialização do cliente do Discord com o token de autenticação
-cliente_discord.run('')
+cliente_discord.run('MTA3OTQyNjc5MDY4NDExNDk1NA.GdFoop.PgHy7Nc0kbvPoFqTRjuR1VBYtHgyONMqet3dPs')
 
 
 
