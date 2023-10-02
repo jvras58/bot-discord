@@ -20,32 +20,3 @@ async def on_message(mensagem):
 # Inicialização do cliente do Discord com o token de autenticação
 cliente_discord.run('')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
