@@ -4,10 +4,12 @@ import re
 import pandas as pd
 import asyncio
 import datetime
+import aiofiles
 
 cliente_discord = discord.Client(intents=discord.Intents.all())
 
 canal_alvo_id = 1158343397279543327
+canal_planilha_id = 1158543934021173258  # Substitua pelo ID do canal onde você deseja enviar a planilha
 
 # DataFrame para armazenar os dados captados
 dados = pd.DataFrame(columns=['ID do Usuário', 'Nome do Usuário', 'Emoji', 'Data de Envio'])
@@ -16,13 +18,11 @@ def salvar_dados():
     # Exporta os dados para uma planilha Excel
     dados.to_excel('dados.xlsx', index=False)
 
-#parte para testa se da pra ficar enviando mensagem para o usuarios lembrarem de enviar a mensagem do checkpoint do dia (a pedidos de tony)
 async def alerta_checkpoint():
     await cliente_discord.wait_until_ready()
     canal = cliente_discord.get_channel(canal_alvo_id)
     while not cliente_discord.is_closed():
         agora = datetime.datetime.now()
-        # ver como isso funciona de verdade pois acho dificil funcionar de primeira kk 
         if agora.hour == 10 and agora.minute == 0:  # Altere para o horário desejado
             await canal.send("@everyone Lembre-se de responder ao #checkpoint!")
             await asyncio.sleep(60)  # Espera um minuto para que o bot não envie várias mensagens
@@ -68,5 +68,9 @@ async def on_message(mensagem):
                         # Salva os dados na planilha
                         salvar_dados()
 
+                        # Envia a planilha para o canal especificado
+                        canal_planilha = cliente_discord.get_channel(canal_planilha_id)
+                        with open('dados.xlsx', 'rb') as f:
+                            await canal_planilha.send("Aqui estão os dados mais recentes:", file=discord.File(f, 'dados.xlsx'))
 # Inicialização do cliente do Discord com o token de autenticação
 cliente_discord.run('')
