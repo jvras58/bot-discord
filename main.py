@@ -1,15 +1,13 @@
 import discord
 import emoji
-import re
 import pandas as pd
 import asyncio
 import datetime
-import aiofiles
 
 cliente_discord = discord.Client(intents=discord.Intents.all())
 
-canal_alvo_id = 1158343397279543327
-canal_planilha_id = 1158543934021173258  # Substitua pelo ID do canal onde você deseja enviar a planilha
+canal_alvo_id = 1158343397279543327 # chat teste 
+canal_planilha_id = 1158543934021173258 # chat teste2 
 
 # DataFrame para armazenar os dados captados
 dados = pd.DataFrame(columns=['ID do Usuário', 'Nome do Usuário', 'Emoji', 'Data de Envio'])
@@ -23,11 +21,11 @@ async def alerta_checkpoint():
     canal = cliente_discord.get_channel(canal_alvo_id)
     while not cliente_discord.is_closed():
         agora = datetime.datetime.now()
-        if agora.hour == 10 and agora.minute == 0:  # Altere para o horário desejado
+        if agora.hour == 10 and agora.minute == 0:  # defini para 10h todos os dias ele vai mandar um everyone para o canal de checkpoint
             await canal.send("@everyone Lembre-se de responder ao #checkpoint!")
-            await asyncio.sleep(60)  # Espera um minuto para que o bot não envie várias mensagens
+            await asyncio.sleep(60)  # time para ele não ficar enviando varias mensagens
         else:
-            await asyncio.sleep(1)  # Espera um segundo antes de verificar novamente
+            await asyncio.sleep(1)  # so pra ele verificar novamente mais acho que isso vai ser desnecessario tbm (podia ser que nem o /checkpoint para marlos avisar todos os dias em determinada hora para fazer o checkpoint (lembra-los))
 
 @cliente_discord.event
 async def on_ready():
@@ -35,7 +33,7 @@ async def on_ready():
 
 @cliente_discord.event
 async def on_message(mensagem):
-    # Verifica se a mensagem não foi enviada pelo próprio bot
+    # isso era pra verificar pq tava enviando a mensagem 2x mais acabou que foi culpa minha que tinha duas instancias do bot rodando kk então é inutil 
     if mensagem.author == cliente_discord.user:
         return
 
@@ -68,9 +66,10 @@ async def on_message(mensagem):
                         # Salva os dados na planilha
                         salvar_dados()
 
-                        # Envia a planilha para o canal especificado
-                        canal_planilha = cliente_discord.get_channel(canal_planilha_id)
-                        with open('dados.xlsx', 'rb') as f:
-                            await canal_planilha.send("Aqui estão os dados mais recentes:", file=discord.File(f, 'dados.xlsx'))
+    elif mensagem.channel.id == canal_planilha_id and mensagem.content.strip() == '/checkpoint':
+        # Envia a planilha para o canal especificado quando o comando /checkpoint é recebido
+        with open('checkpoint.xlsx', 'rb') as f:
+            await mensagem.channel.send("Aqui esta o checkpoint de hoje meu senhor:", file=discord.File(f, 'dados.xlsx'))
+
 # Inicialização do cliente do Discord com o token de autenticação
 cliente_discord.run('')
