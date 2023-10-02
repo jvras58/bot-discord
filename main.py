@@ -1,4 +1,6 @@
 import discord
+import emoji
+import re
 
 cliente_discord = discord.Client(intents=discord.Intents.all())
 
@@ -10,6 +12,10 @@ async def on_ready():
 
 @cliente_discord.event
 async def on_message(mensagem):
+    # Verifica se a mensagem não foi enviada pelo próprio bot
+    if mensagem.author == cliente_discord.user:
+        return
+
     if mensagem.channel.id == canal_alvo_id:
         linhas = mensagem.content.split('\n')
         if len(linhas) == 4:
@@ -17,14 +23,13 @@ async def on_message(mensagem):
             if primeira_linha.startswith('- **Hj estou') or primeira_linha.startswith('Hj estou:') or primeira_linha.startswith('- Hj estou:'):
                 partes = primeira_linha.split(':')
                 if len(partes) > 1:
-                    emoji = partes[1].strip()
-                    if emoji.startswith('**'):
-                        emoji = emoji[2:]
-                    # FIXME: essa parte de remover o texto que vem com o emoji ta sem funcionar direito ACABA REMOVENDO O EMOJI É DEIXANDO A MENSAGEM EM BRANCO EM ALGUNS CASOS (CASO DE ISABELLE)
-                    # if ' ' in emoji:
-                    #     emoji = emoji.split(' ')[0]
-                    await mensagem.channel.send(f'O emoji é {emoji}')
+                    texto = partes[1].strip()
+                    if texto.startswith('**'):
+                        texto = texto[2:]
+                    # Extrai todos os emojis da string usando a função emoji.emoji_count()
+                    emojis = [char for char in texto if emoji.emoji_count(char)]
+                    # Envia apenas o primeiro emoji encontrado
+                    if emojis:
+                        await mensagem.channel.send(f'O emoji é {emojis[0]}')
 # Inicialização do cliente do Discord com o token de autenticação
 cliente_discord.run('')
-
-
