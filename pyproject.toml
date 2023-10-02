@@ -6,13 +6,15 @@ authors = ["jvras <jvras@cin.ufpe.br>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.11,<3.13"
 numpy = "^1.22.2"
 replit = "^3.2.4"
 Flask = "^2.2.0"
 urllib3 = "^1.26.12"
 discord = "^2.1.0"
 emoji = "^2.8.0"
+pandas = "^2.1.1"
+openpyxl = "^3.1.2"
 
 
 
