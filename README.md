@@ -1,5 +1,3 @@
-# Projeto-Bot-Checkpoint
-
 # Projeto Bot Checkpoint
 ## Introdução
 Consiste em um bot usando a api do discord feito em python para pegar determinado template de mensagem é envia-los para uma planilha 
