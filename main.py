@@ -5,6 +5,9 @@ import asyncio
 import datetime
 import os
 import time
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 cliente_discord = discord.Client(intents=discord.Intents.all())
@@ -34,10 +37,9 @@ async def alerta_checkpoint():
         # print(f"A hora atual é: {agora}")
         if agora.hour == 11 and agora.minute == 0:
             await canal.send("@everyone Lembre-se de responder ao #checkpoint!")
-            await asyncio.sleep(60) #para ele não ficar spawnando a mensagem direto
+            await asyncio.sleep(60) # para ele não ficar spawnando a mensagem direto
         else:
             await asyncio.sleep(1)
-
 
 @cliente_discord.event
 async def on_ready():
@@ -55,7 +57,12 @@ async def on_message(mensagem):
     """
     if mensagem.author == cliente_discord.user:
         return
-
+    
+    if mensagem.content.startswith('/status'):
+        await mensagem.channel.send(
+            'Estou funcionando perfeitamente! Meu status é {0}'.format(
+                cliente_discord.status))
+        
     if mensagem.channel.id == canal_alvo_id:
         await processa_mensagem_canal_alvo(mensagem)
     elif mensagem.channel.id == canal_planilha_id and mensagem.content.strip() == '/checkpoint':
@@ -81,7 +88,7 @@ async def processa_mensagem_canal_alvo(mensagem):
                     data_envio = mensagem.created_at
                     data_envio_sem_fuso_horario = data_envio.replace(tzinfo=None)
                     # print com a mensagem capturada para testes
-                    #await mensagem.channel.send(f'O usuário {nome_usuario} com ID {id_usuario} enviou um emoji: {emojis[0]}')
+                    await mensagem.channel.send(f'O usuário {nome_usuario} com ID {id_usuario} enviou um emoji: {emojis[0]}')
                     
                     # O .loc é usado para acessar linhas e colunas por rótulo len(dados) retorna o número de linhas no DataFrame (então Adiciona uma nova linha ao DataFrame 'dados')
                     dados.loc[len(dados)] = [id_usuario, nome_usuario, emojis[0], data_envio_sem_fuso_horario]
@@ -97,7 +104,7 @@ async def envia_planilha(mensagem):
     # Verifica se existe usando o os 
     if not os.path.exists('checkpoint.xlsx'):
         # se não existir avisa que não existe
-        await mensagem.channel.send("Nenhum checkpoint identificado por favor gere um no canal de #checkpoint!.")
+        await mensagem.channel.send("Nenhum checkpoint identificado Por favor Gere um no Canal de #checkpoint! .")
     else:
         # se existir ele envia 
         # rb modo leitura / f arquivo aberto 
@@ -107,12 +114,10 @@ async def envia_planilha(mensagem):
 while True:
     try:
         # Inicialização do cliente do Discord
-        cliente_discord.run('')
-        # se for colocar segurança no token definir usando o os do env
-        # cliente_discord.run(os.getenv('DISCORD_TOKEN'))
+        cliente_discord.run(os.getenv('DISCORD_TOKEN'))
     except Exception as e:
         print(f"Erro encontrado: {e}. Reiniciando o bot.")
-        time.sleep(5)  # Pausa por 5 s
+        time.sleep(5)  # Pausa por 5s
 
 
 
