@@ -4,6 +4,7 @@ import emoji
 import pandas as pd
 import asyncio
 import datetime
+import os
 
 # Inicializando o cliente do Discord com todas as intenções
 cliente_discord = discord.Client(intents=discord.Intents.all())
@@ -90,3 +91,8 @@ async def envia_planilha(mensagem):
 
 # Inicialização do cliente do Discord com o token de autenticação
 cliente_discord.run('')
+
+
+#se for colocar segurança que eu acho que no momento nem precisa rs
+# cliente_discord.run(os.getenv('DISCORD_TOKEN'))
+
