@@ -1,19 +1,19 @@
-# Importando as bibliotecas necessárias
 import discord
 import emoji
 import pandas as pd
 import asyncio
 import datetime
 import os
+import time
 
-# Inicializando o cliente do Discord com todas as intenções
+
 cliente_discord = discord.Client(intents=discord.Intents.all())
 
-# Definindo os IDs dos canais alvo
+
 canal_alvo_id = 1158343397279543327  # chat teste 
 canal_planilha_id = 1158543934021173258  # chat teste2 
 
-# DataFrame para armazenar os dados captados
+# df para armazenar os dados pegos pelo bot
 dados = pd.DataFrame(columns=['ID do Usuário', 'Nome do Usuário', 'Emoji', 'Data de Envio'])
 
 def salvar_dados():
@@ -30,11 +30,14 @@ async def alerta_checkpoint():
     canal = cliente_discord.get_channel(canal_alvo_id)
     while not cliente_discord.is_closed():
         agora = datetime.datetime.now()
-        if agora.hour == 10 and agora.minute == 0:
+        # teste para ver que horas são:
+        # print(f"A hora atual é: {agora}")
+        if agora.hour == 11 and agora.minute == 0:
             await canal.send("@everyone Lembre-se de responder ao #checkpoint!")
             await asyncio.sleep(60) #para ele não ficar spawnando a mensagem direto
         else:
             await asyncio.sleep(1)
+
 
 @cliente_discord.event
 async def on_ready():
@@ -42,6 +45,8 @@ async def on_ready():
     Função para imprimir uma mensagem quando o bot estiver pronto.
     """
     print('Logado como {0.user}'.format(cliente_discord))
+    # criar a tarefa pro bot ficar executando sempre o alert_checkpoint  
+    cliente_discord.loop.create_task(alerta_checkpoint())
 
 @cliente_discord.event
 async def on_message(mensagem):
@@ -75,10 +80,13 @@ async def processa_mensagem_canal_alvo(mensagem):
                     nome_usuario = mensagem.author.name
                     data_envio = mensagem.created_at
                     data_envio_sem_fuso_horario = data_envio.replace(tzinfo=None)
-                    await mensagem.channel.send(f'O usuário {nome_usuario} com ID {id_usuario} enviou um emoji: {emojis[0]}')
+                    # print com a mensagem capturada para testes
+                    #await mensagem.channel.send(f'O usuário {nome_usuario} com ID {id_usuario} enviou um emoji: {emojis[0]}')
                     
+                    # O .loc é usado para acessar linhas e colunas por rótulo len(dados) retorna o número de linhas no DataFrame (então Adiciona uma nova linha ao DataFrame 'dados')
                     dados.loc[len(dados)] = [id_usuario, nome_usuario, emojis[0], data_envio_sem_fuso_horario]
-                    
+
+                    # Converte a coluna 'Data de Envio' do DataFrame para string.
                     dados['Data de Envio'] = dados['Data de Envio'].astype(str)
                     salvar_dados()
 
@@ -86,13 +94,25 @@ async def envia_planilha(mensagem):
     """
     Função para enviar a planilha quando o comando /checkpoint é recebido.
     """
-    with open('checkpoint.xlsx', 'rb') as f:
-        await mensagem.channel.send("Aqui esta o checkpoint de hoje:", file=discord.File(f, 'checkpoint.xlsx'))
+    # Verifica se existe usando o os 
+    if not os.path.exists('checkpoint.xlsx'):
+        # se não existir avisa que não existe
+        await mensagem.channel.send("Nenhum checkpoint identificado por favor gere um no canal de #checkpoint!.")
+    else:
+        # se existir ele envia 
+        # rb modo leitura / f arquivo aberto 
+        with open('checkpoint.xlsx', 'rb') as f:
+            await mensagem.channel.send("Aqui está o checkpoint de hoje:", file=discord.File(f, 'checkpoint.xlsx'))
 
-# Inicialização do cliente do Discord com o token de autenticação
-cliente_discord.run('')
+while True:
+    try:
+        # Inicialização do cliente do Discord
+        cliente_discord.run('')
+        # se for colocar segurança no token definir usando o os do env
+        # cliente_discord.run(os.getenv('DISCORD_TOKEN'))
+    except Exception as e:
+        print(f"Erro encontrado: {e}. Reiniciando o bot.")
+        time.sleep(5)  # Pausa por 5 s
 
 
-#se for colocar segurança que eu acho que no momento nem precisa rs
-# cliente_discord.run(os.getenv('DISCORD_TOKEN'))
 
