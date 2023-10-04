@@ -39,6 +39,27 @@ async def alerta_checkpoint():
             await asyncio.sleep(60) # para ele não ficar spawnando a mensagem direto
         else:
             await asyncio.sleep(1)
+            
+async def verificar_checkpoints_nao_enviados():
+    """
+    Função assíncrona para verificar quem não enviou o checkpoint do dia e enviar uma mensagem privada (DM).
+    """
+    await cliente_discord.wait_until_ready()
+    canal_alvo = cliente_discord.get_channel(canal_alvo_id)
+    while not cliente_discord.is_closed():
+        agora = datetime.datetime.now()
+        if agora.hour == 10 and agora.minute == 0:
+            # Lista de usuários que já enviaram o checkpoint
+            usuarios_enviaram = dados['ID do Usuário'].tolist()
+            # Lista de membros do servidor
+            membros = canal_alvo.guild.members
+            for membro in membros:
+                if membro.id not in usuarios_enviaram:
+                    # Envia mensagem privada para usuários que não enviaram o checkpoint
+                    await membro.send("Você não enviou o checkpoint hoje! Por favor, envie o checkpoint.")
+            await asyncio.sleep(60)  # para evitar mensagens repetidas
+        else:
+            await asyncio.sleep(1)
 
 @cliente_discord.event
 async def on_ready():
@@ -48,6 +69,7 @@ async def on_ready():
     print('Logado como {0.user}'.format(cliente_discord))
     # criar a tarefa pro bot ficar executando sempre o alert_checkpoint  
     cliente_discord.loop.create_task(alerta_checkpoint())
+    cliente_discord.loop.create_task(verificar_checkpoints_nao_enviados())
 
 @cliente_discord.event
 async def on_message(mensagem):
