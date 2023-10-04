@@ -48,7 +48,7 @@ async def verificar_checkpoints_nao_enviados():
     canal_alvo = cliente_discord.get_channel(canal_alvo_id)
     while not cliente_discord.is_closed():
         agora = datetime.datetime.now()
-        if agora.hour == 10 and agora.minute == 0:
+        if agora.hour == 12 and agora.minute == 0:
             # Lista de usuários que já enviaram o checkpoint
             usuarios_enviaram = dados['ID do Usuário'].tolist()
             # Lista de membros do servidor
@@ -60,6 +60,28 @@ async def verificar_checkpoints_nao_enviados():
             await asyncio.sleep(60)  # para evitar mensagens repetidas
         else:
             await asyncio.sleep(1)
+            
+# async def verificar_checkpoints_ids_especificos(ids_verificar):
+#     """
+#     Função assíncrona para verificar se os IDs específicos enviaram o checkpoint do dia e enviar uma mensagem privada (DM).
+#     """
+#     await cliente_discord.wait_until_ready()
+#     canal_alvo = cliente_discord.get_channel(canal_alvo_id)
+#     while not cliente_discord.is_closed():
+#         agora = datetime.datetime.now()
+#         if agora.hour == 10 and agora.minute == 0:
+#             for id_verificar in ids_verificar:
+#                 if id_verificar not in dados['ID do Usuário'].tolist():
+#                     # Envia mensagem privada para usuários que não enviaram o checkpoint
+#                     try:
+#                         usuario = await cliente_discord.fetch_user(id_verificar)
+#                         await usuario.send("Você não enviou o checkpoint hoje! Por favor, envie o checkpoint.")
+#                     except discord.errors.Forbidden:
+#                         print(f"Não foi possível enviar mensagem para o usuário com ID {id_verificar}.")
+#             await asyncio.sleep(60)  # para evitar mensagens repetidas
+#         else:
+#             await asyncio.sleep(1)
+
 
 @cliente_discord.event
 async def on_ready():
@@ -67,9 +89,12 @@ async def on_ready():
     Função para imprimir uma mensagem quando o bot estiver pronto.
     """
     print('Logado como {0.user}'.format(cliente_discord))
-    # criar a tarefa pro bot ficar executando sempre o alert_checkpoint  
+    # criar a tarefa pro bot ficar executando: 
     cliente_discord.loop.create_task(alerta_checkpoint())
     cliente_discord.loop.create_task(verificar_checkpoints_nao_enviados())
+    # ids_verificar = [1011275388489580595, 523262771677102101, 840041545183789087]
+    # cliente_discord.loop.create_task(verificar_checkpoints_ids_especificos(ids_verificar))
+
 
 @cliente_discord.event
 async def on_message(mensagem):
