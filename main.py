@@ -33,9 +33,8 @@ async def alerta_checkpoint():
     canal = cliente_discord.get_channel(canal_alvo_id)
     while not cliente_discord.is_closed():
         agora = datetime.datetime.now()
-        # teste para ver que horas são:
         # print(f"A hora atual é: {agora}")
-        if agora.hour == 11 and agora.minute == 0:
+        if agora.hour == 10 and agora.minute == 0:
             await canal.send("@everyone Lembre-se de responder ao #checkpoint!")
             await asyncio.sleep(60) # para ele não ficar spawnando a mensagem direto
         else:
@@ -110,7 +109,9 @@ async def envia_planilha(mensagem):
         # rb modo leitura / f arquivo aberto 
         with open('checkpoint.xlsx', 'rb') as f:
             await mensagem.channel.send("Aqui está o checkpoint de hoje:", file=discord.File(f, 'checkpoint.xlsx'))
-
+        # apaga do arquivo local depois de enviado para não encher 
+        os.remove('checkpoint.xlsx')
+        
 while True:
     try:
         # Inicialização do cliente do Discord
