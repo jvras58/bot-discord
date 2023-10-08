@@ -12,9 +12,8 @@ load_dotenv()
 
 cliente_discord = discord.Client(intents=discord.Intents.all())
 
-
-canal_alvo_id = 1158343397279543327  # chat teste 
-canal_planilha_id = 1158543934021173258  # chat teste2 
+canal_alvo_id = int(os.getenv('CANAL_ALVOCHECKPOINT_ID'))
+canal_planilha_id = int(os.getenv('CANAL_PLANILHA_ID'))
 
 # df para armazenar os dados pegos pelo bot
 dados = pd.DataFrame(columns=['ID do Usuário', 'Nome do Usuário', 'Emoji', 'Data de Envio'])
@@ -27,14 +26,14 @@ def salvar_dados():
 
 async def alerta_checkpoint():
     """
-    Função assíncrona para enviar um alerta de checkpoint no canal alvo todos os dias às 10h.
+    Função assíncrona para enviar um alerta de checkpoint no canal alvo de segunda a sexta-feira às 10h.
     """
     await cliente_discord.wait_until_ready()
     canal = cliente_discord.get_channel(canal_alvo_id)
     while not cliente_discord.is_closed():
         agora = datetime.datetime.now()
-        # print(f"A hora atual é: {agora}")
-        if agora.hour == 10 and agora.minute == 0:
+        # so dias de seg a sexta
+        if agora.weekday() < 5 and agora.hour == 10 and agora.minute == 0:
             await canal.send("@everyone Lembre-se de responder ao #checkpoint!")
             await asyncio.sleep(60) # para ele não ficar spawnando a mensagem direto
         else:
@@ -48,7 +47,7 @@ async def verificar_checkpoints_nao_enviados():
     canal_alvo = cliente_discord.get_channel(canal_alvo_id)
     while not cliente_discord.is_closed():
         agora = datetime.datetime.now()
-        if agora.hour == 12 and agora.minute == 0:
+        if  agora.weekday() < 5 and agora.hour == 12 and agora.minute == 0:
             # Lista de usuários que já enviaram o checkpoint
             usuarios_enviaram = dados['ID do Usuário'].tolist()
             # Lista de membros do servidor
@@ -61,28 +60,6 @@ async def verificar_checkpoints_nao_enviados():
         else:
             await asyncio.sleep(1)
             
-# async def verificar_checkpoints_ids_especificos(ids_verificar):
-#     """
-#     Função assíncrona para verificar se os IDs específicos enviaram o checkpoint do dia e enviar uma mensagem privada (DM).
-#     """
-#     await cliente_discord.wait_until_ready()
-#     canal_alvo = cliente_discord.get_channel(canal_alvo_id)
-#     while not cliente_discord.is_closed():
-#         agora = datetime.datetime.now()
-#         if agora.hour == 10 and agora.minute == 0:
-#             for id_verificar in ids_verificar:
-#                 if id_verificar not in dados['ID do Usuário'].tolist():
-#                     # Envia mensagem privada para usuários que não enviaram o checkpoint
-#                     try:
-#                         usuario = await cliente_discord.fetch_user(id_verificar)
-#                         await usuario.send("Você não enviou o checkpoint hoje! Por favor, envie o checkpoint.")
-#                     except discord.errors.Forbidden:
-#                         print(f"Não foi possível enviar mensagem para o usuário com ID {id_verificar}.")
-#             await asyncio.sleep(60)  # para evitar mensagens repetidas
-#         else:
-#             await asyncio.sleep(1)
-
-
 @cliente_discord.event
 async def on_ready():
     """
@@ -92,8 +69,7 @@ async def on_ready():
     # criar a tarefa pro bot ficar executando: 
     cliente_discord.loop.create_task(alerta_checkpoint())
     cliente_discord.loop.create_task(verificar_checkpoints_nao_enviados())
-    # ids_verificar = [1011275388489580595, 523262771677102101, 840041545183789087]
-    # cliente_discord.loop.create_task(verificar_checkpoints_ids_especificos(ids_verificar))
+
 
 
 @cliente_discord.event
@@ -164,7 +140,7 @@ while True:
         # Inicialização do cliente do Discord
         cliente_discord.run(os.getenv('DISCORD_TOKEN'))
     except Exception as e:
-        print(f"Erro encontrado: {e}. Reiniciando o bot.")
+        print(f"Erro: {e}. Reiniciando o bot.")
         time.sleep(5)  # Pausa por 5s
 
 
