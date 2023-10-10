@@ -24,17 +24,21 @@ def salvar_dados():
     """
     dados.to_excel('checkpoint.xlsx', index=False)
 
+enviar_everyone = True
 async def alerta_checkpoint():
     """
     Função assíncrona para enviar um alerta de checkpoint no canal alvo de segunda a sexta-feira às 10h.
     """
+    global enviar_everyone 
+
     await cliente_discord.wait_until_ready()
     canal = cliente_discord.get_channel(canal_alvo_id)
     while not cliente_discord.is_closed():
         agora = datetime.datetime.now()
         # so dias de seg a sexta
         if agora.weekday() < 5 and agora.hour == 10 and agora.minute == 0:
-            await canal.send("@everyone Lembre-se de responder ao #checkpoint!")
+            if enviar_everyone:  # Verifica se enviar_everyone é True antes de enviar a mensagem
+                await canal.send("@everyone Lembre-se de responder ao #checkpoint!")
             await asyncio.sleep(60) # para ele não ficar spawnando a mensagem direto
         else:
             await asyncio.sleep(1)
@@ -77,8 +81,23 @@ async def on_message(mensagem):
     """
     Função para lidar com mensagens recebidas.
     """
+    #-------função em teste--------#
+    global enviar_everyone 
+    #-------------fim--------#
     if mensagem.author == cliente_discord.user:
         return
+    
+#------------------------------------------função em teste-----------------------------------------------------------#
+    if mensagem.content.startswith('/desabeveryone'):
+        enviar_everyone = False
+        await mensagem.channel.send("O envio de mensagens everyone foi desativado.")
+    
+    if mensagem.content.startswith('/linkbot'):
+        await envia_link_bot(mensagem)
+
+    if mensagem.content.startswith('/trocarid'):
+        await trocar_id(mensagem)
+#------------------------------------------fim---------------------------------------------------------------------------#
     
     if mensagem.content.startswith('/status'):
         await mensagem.channel.send(
@@ -89,6 +108,42 @@ async def on_message(mensagem):
         await processa_mensagem_canal_alvo(mensagem)
     elif mensagem.channel.id == canal_planilha_id and mensagem.content.strip() == '/checkpoint':
         await envia_planilha(mensagem)
+
+#------------------------------------------função em teste-----------------------------------------------------------#
+# função pegar o link..
+async def envia_link_bot(mensagem):
+    """
+    Função para enviar o link do bot quando o comando /linkbot é recebido.
+    """
+    link = f"https://discord.com/api/oauth2/authorize?client_id={cliente_discord.user.id}&permissions=0&scope=bot"
+    await mensagem.channel.send(f"Aqui está o link: {link}")
+
+
+# função para marlos trocar os ids dos canais checkpoint ou de receber a planilha..
+# FUNÇÃO APAREMTIMENTE SEM FUNCIONAR 
+async def trocar_id(mensagem):
+    """
+    Função para alterar os IDs dos canais quando o comando /trocarid é recebido.
+    """
+    # Verifica se o usuário tem permissões de administrador
+    if mensagem.author.guild_permissions.administrator:
+        # Solicita ao usuário os novos IDs dos canais
+        await mensagem.channel.send("Por favor, envie o novo ID do canal alvo.")
+        resposta = await cliente_discord.wait_for('message', check=lambda m: m.author == mensagem.author)
+        canal_alvo_id = int(resposta.content)
+
+        await mensagem.channel.send("Por favor, envie o novo ID do canal da planilha.")
+        resposta = await cliente_discord.wait_for('message', check=lambda m: m.author == mensagem.author)
+        canal_planilha_id = int(resposta.content)
+
+        # Atualiza os IDs dos canais
+        os.environ['CANAL_ALVOCHECKPOINT_ID'] = str(canal_alvo_id)
+        os.environ['CANAL_PLANILHA_ID'] = str(canal_planilha_id)
+
+        await mensagem.channel.send("Os IDs dos canais foram atualizados com sucesso.")
+    else:
+        await mensagem.channel.send("Desculpe, mas você não tem permissões suficientes para alterar os IDs dos canais.")
+#-------------------------------------------------------fim----------------------------------------------------------------------#
 
 async def processa_mensagem_canal_alvo(mensagem):
     """
@@ -110,7 +165,7 @@ async def processa_mensagem_canal_alvo(mensagem):
                     data_envio = mensagem.created_at
                     data_envio_sem_fuso_horario = data_envio.replace(tzinfo=None)
                     # print com a mensagem capturada para testes
-                    await mensagem.channel.send(f'O usuário {nome_usuario} com ID {id_usuario} enviou um emoji: {emojis[0]}')
+                    # await mensagem.channel.send(f'O usuário {nome_usuario} com ID {id_usuario} enviou um emoji: {emojis[0]}')
                     
                     # O .loc é usado para acessar linhas e colunas por rótulo len(dados) retorna o número de linhas no DataFrame (então Adiciona uma nova linha ao DataFrame 'dados')
                     dados.loc[len(dados)] = [id_usuario, nome_usuario, emojis[0], data_envio_sem_fuso_horario]
