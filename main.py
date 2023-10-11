@@ -87,30 +87,35 @@ async def on_message(mensagem):
     global enviar_everyone, enviar_dm, ids_ignorados, canal_checkpoint_id, canal_planilha_id
     if mensagem.author == cliente_discord.user:
         return
-
+    
     if isinstance(mensagem.channel, discord.DMChannel):
         if mensagem.content.startswith('/linkbot'):
             await envia_link_bot(mensagem)
+       
         elif mensagem.content.startswith('/status'):
             await mensagem.channel.send(
                 'Estou funcionando perfeitamente! Meu status é {0}'.format(
                     cliente_discord.status))
+       
+        elif mensagem.content.startswith('/dm'):
+            partes = mensagem.content.split()
+            if len(partes) >= 3:
+                id_usuario = int(partes[1])
+                texto = ' '.join(partes[2:])
+                usuario = cliente_discord.get_user(id_usuario)
+                if usuario:
+                    await usuario.send(texto)
+                    #await mensagem.channel.send(f"Mensagem enviada para o usuário com ID {id_usuario}.")
+                else:
+                    await mensagem.channel.send(f"Não foi possível encontrar o usuário com ID {id_usuario}.")
+            else:
+                await mensagem.channel.send("Por favor, forneça um ID de usuário e uma mensagem. Exemplo: /dm 11111111111111111 Olá!")
+
+        elif mensagem.content.startswith('/comousar'):
+            with open('explicativo.md', 'rb') as file:
+                await mensagem.channel.send("Aqui está a introdução do bot:", file=discord.File(file, 'explicativo.md'))
         return
     
-    if mensagem.content.startswith('/dm'):
-        partes = mensagem.content.split()
-        if len(partes) >= 3:
-            id_usuario = int(partes[1])
-            texto = ' '.join(partes[2:])
-            usuario = cliente_discord.get_user(id_usuario)
-            if usuario:
-                await usuario.send(texto)
-                #await mensagem.channel.send(f"Mensagem enviada para o usuário com ID {id_usuario}.")
-            #else:
-                #await mensagem.channel.send(f"Não foi possível encontrar o usuário com ID {id_usuario}.")
-        else:
-            await mensagem.channel.send("Por favor, forneça um ID de usuário e uma mensagem. Exemplo: /dm 11111111111111111 Olá!")
-
     if mensagem.content.startswith('/offeveryone'):
         enviar_everyone = False
         await mensagem.channel.send("O envio de mensagens @everyone foi desativado.")
@@ -225,16 +230,6 @@ async def envia_planilha(mensagem):
             await mensagem.channel.send("Aqui está o checkpoint de hoje:", file=discord.File(f, 'checkpoint.xlsx'))
         # apaga do arquivo local depois de enviado para não encher 
         os.remove('checkpoint.xlsx')
-
-@cliente_discord.event
-async def on_guild_join(guild):
-    """
-    Função para lidar quando o bot é adicionado a um servidor.
-    """
-    # Envia o arquivo 'explicativo.md' no canal do sistema do servidor
-    if guild.system_channel is not None:
-        with open('explicativo.md', 'rb') as file:
-            await guild.system_channel.send("Aqui está a introdução do bot:", file=discord.File(file, 'explicativo.md'))
 
         
 while True:
