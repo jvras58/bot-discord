@@ -24,7 +24,11 @@ O Projeto Bot Checkpoint é um aplicativo desenvolvido em Python que utiliza a A
 
 7. O bot enviará uma mensagem `@everyone` no canal do checkpoint em um horário determinado. Essa função pode ser ativada/desativada com os comandos `/offeveryone` & `/oneveryone`. (Horário de envio: 10h; nos finais de semana essa função é desativada automaticamente).
 
-8. Função extra: é possível ignorar IDs, ou seja, nenhuma mensagem será enviada para o ID ignorado (útil para períodos de férias). Use os comandos `/idignore` para remover e `/readicionarids` para adiciona-los novamente.
+8. Função de mandar mensagem privada por meio do comando `/dm` onde o bot enviará uma mensagem privada para o id que for fornecido 
+
+
+9. Função extra: é possível ignorar IDs, ou seja, nenhuma mensagem será enviada para o ID ignorado (útil para períodos de férias). Use os comandos `/idignore` para remover e `/readicionarids` para adiciona-los novamente.
+
 
 Para executar o bot em um container Docker, utilize os seguintes comandos:
 ```bash

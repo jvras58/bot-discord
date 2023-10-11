@@ -96,6 +96,20 @@ async def on_message(mensagem):
                 'Estou funcionando perfeitamente! Meu status é {0}'.format(
                     cliente_discord.status))
         return
+    
+    if mensagem.content.startswith('/dm'):
+        partes = mensagem.content.split()
+        if len(partes) >= 3:
+            id_usuario = int(partes[1])
+            texto = ' '.join(partes[2:])
+            usuario = cliente_discord.get_user(id_usuario)
+            if usuario:
+                await usuario.send(texto)
+                #await mensagem.channel.send(f"Mensagem enviada para o usuário com ID {id_usuario}.")
+            #else:
+                #await mensagem.channel.send(f"Não foi possível encontrar o usuário com ID {id_usuario}.")
+        else:
+            await mensagem.channel.send("Por favor, forneça um ID de usuário e uma mensagem. Exemplo: /dm 11111111111111111 Olá!")
 
     if mensagem.content.startswith('/offeveryone'):
         enviar_everyone = False
