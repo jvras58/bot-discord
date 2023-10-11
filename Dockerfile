@@ -1,21 +1,14 @@
-# Use a imagem base do Python
 FROM python:3.11
+ENV POETRY_VIRTUALENVS_CREATE=false
 
-# Define o diretório de trabalho no contêiner
+RUN pip install poetry
+
 WORKDIR /app
 
-# Copia os arquivos do projeto para o contêiner
+COPY pyproject.toml poetry.lock ./
+
+RUN poetry install
+
 COPY . .
 
-# Instala as dependências do projeto
-RUN pip install discord 
-RUN pip install emoji
-RUN pip install pandas
-RUN pip install asyncio
-RUN pip install datetime
-RUN pip install python-dotenv
-
-# Comando para executar o bot
-CMD ["python", "main.py"]
-
-
+CMD ["poetry", "run", "python", "main.py"]

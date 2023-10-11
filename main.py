@@ -81,24 +81,23 @@ async def on_message(mensagem):
     """
     Função para lidar com mensagens recebidas.
     """
-    #-------função em teste--------#
     global enviar_everyone 
-    #-------------fim--------#
     if mensagem.author == cliente_discord.user:
         return
     
-#------------------------------------------função em teste-----------------------------------------------------------#
-    if mensagem.content.startswith('/desabeveryone'):
+    if mensagem.content.startswith('/offeveryone'):
+        # Altere o valor de enviar_everyone para False quando o comando /offeveryone for recebido
         enviar_everyone = False
-        await mensagem.channel.send("O envio de mensagens everyone foi desativado.")
+        await mensagem.channel.send("O envio de mensagens @everyone foi desativado.")
+        
+    elif mensagem.content.startswith('/oneveryone'):
+        # Altere o valor de enviar_everyone para True quando o comando /oneveryone for recebido
+        enviar_everyone = True
+        await mensagem.channel.send("O envio de mensagens @everyone foi reativado.")
     
     if mensagem.content.startswith('/linkbot'):
         await envia_link_bot(mensagem)
 
-    if mensagem.content.startswith('/trocarid'):
-        await trocar_id(mensagem)
-#------------------------------------------fim---------------------------------------------------------------------------#
-    
     if mensagem.content.startswith('/status'):
         await mensagem.channel.send(
             'Estou funcionando perfeitamente! Meu status é {0}'.format(
@@ -109,8 +108,7 @@ async def on_message(mensagem):
     elif mensagem.channel.id == canal_planilha_id and mensagem.content.strip() == '/checkpoint':
         await envia_planilha(mensagem)
 
-#------------------------------------------função em teste-----------------------------------------------------------#
-# função pegar o link..
+
 async def envia_link_bot(mensagem):
     """
     Função para enviar o link do bot quando o comando /linkbot é recebido.
@@ -118,32 +116,6 @@ async def envia_link_bot(mensagem):
     link = f"https://discord.com/api/oauth2/authorize?client_id={cliente_discord.user.id}&permissions=0&scope=bot"
     await mensagem.channel.send(f"Aqui está o link: {link}")
 
-
-# função para marlos trocar os ids dos canais checkpoint ou de receber a planilha..
-# FUNÇÃO APAREMTIMENTE SEM FUNCIONAR 
-async def trocar_id(mensagem):
-    """
-    Função para alterar os IDs dos canais quando o comando /trocarid é recebido.
-    """
-    # Verifica se o usuário tem permissões de administrador
-    if mensagem.author.guild_permissions.administrator:
-        # Solicita ao usuário os novos IDs dos canais
-        await mensagem.channel.send("Por favor, envie o novo ID do canal alvo.")
-        resposta = await cliente_discord.wait_for('message', check=lambda m: m.author == mensagem.author)
-        canal_alvo_id = int(resposta.content)
-
-        await mensagem.channel.send("Por favor, envie o novo ID do canal da planilha.")
-        resposta = await cliente_discord.wait_for('message', check=lambda m: m.author == mensagem.author)
-        canal_planilha_id = int(resposta.content)
-
-        # Atualiza os IDs dos canais
-        os.environ['CANAL_ALVOCHECKPOINT_ID'] = str(canal_alvo_id)
-        os.environ['CANAL_PLANILHA_ID'] = str(canal_planilha_id)
-
-        await mensagem.channel.send("Os IDs dos canais foram atualizados com sucesso.")
-    else:
-        await mensagem.channel.send("Desculpe, mas você não tem permissões suficientes para alterar os IDs dos canais.")
-#-------------------------------------------------------fim----------------------------------------------------------------------#
 
 async def processa_mensagem_canal_alvo(mensagem):
     """
