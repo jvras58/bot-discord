@@ -12,8 +12,8 @@ load_dotenv()
 
 cliente_discord = discord.Client(intents=discord.Intents.all())
 
-canal_alvo_id = int(os.getenv('CANAL_ALVOCHECKPOINT_ID'))
-canal_planilha_id = int(os.getenv('CANAL_PLANILHA_ID'))
+canal_checkpoint_id = None
+canal_planilha_id = None
 
 # df para armazenar os dados pegos pelo bot
 dados = pd.DataFrame(columns=['ID do Usuário', 'Nome do Usuário', 'Emoji', 'Data de Envio'])
@@ -32,7 +32,7 @@ async def alerta_checkpoint():
     global enviar_everyone 
 
     await cliente_discord.wait_until_ready()
-    canal = cliente_discord.get_channel(canal_alvo_id)
+    canal = cliente_discord.get_channel(canal_checkpoint_id)
     while not cliente_discord.is_closed():
         agora = datetime.datetime.now()
         # so dias de seg a sexta
@@ -42,13 +42,16 @@ async def alerta_checkpoint():
             await asyncio.sleep(60) # para ele não ficar spawnando a mensagem direto
         else:
             await asyncio.sleep(1)
-            
+
+enviar_dm = True
+ids_ignorados = []
 async def verificar_checkpoints_nao_enviados():
     """
     Função assíncrona para verificar quem não enviou o checkpoint do dia e enviar uma mensagem privada (DM).
     """
+    global enviar_dm, ids_ignorados
     await cliente_discord.wait_until_ready()
-    canal_alvo = cliente_discord.get_channel(canal_alvo_id)
+    canal_alvo = cliente_discord.get_channel(canal_checkpoint_id)
     while not cliente_discord.is_closed():
         agora = datetime.datetime.now()
         if  agora.weekday() < 5 and agora.hour == 12 and agora.minute == 0:
@@ -57,9 +60,10 @@ async def verificar_checkpoints_nao_enviados():
             # Lista de membros do servidor
             membros = canal_alvo.guild.members
             for membro in membros:
-                if membro.id not in usuarios_enviaram:
+                if membro.id not in usuarios_enviaram and membro.id not in ids_ignorados:
                     # Envia mensagem privada para usuários que não enviaram o checkpoint
-                    await membro.send("Você não enviou o checkpoint hoje! Por favor, envie o checkpoint.")
+                    if enviar_dm:
+                        await membro.send("Você não enviou o checkpoint hoje! Por favor, envie o checkpoint.")
             await asyncio.sleep(60)  # para evitar mensagens repetidas
         else:
             await asyncio.sleep(1)
@@ -75,25 +79,71 @@ async def on_ready():
     cliente_discord.loop.create_task(verificar_checkpoints_nao_enviados())
 
 
-
 @cliente_discord.event
 async def on_message(mensagem):
     """
     Função para lidar com mensagens recebidas.
     """
-    global enviar_everyone 
+    global enviar_everyone, enviar_dm, ids_ignorados, canal_checkpoint_id, canal_planilha_id
     if mensagem.author == cliente_discord.user:
         return
-    
+
+    if isinstance(mensagem.channel, discord.DMChannel):
+        if mensagem.content.startswith('/linkbot'):
+            await envia_link_bot(mensagem)
+        elif mensagem.content.startswith('/status'):
+            await mensagem.channel.send(
+                'Estou funcionando perfeitamente! Meu status é {0}'.format(
+                    cliente_discord.status))
+        return
+
     if mensagem.content.startswith('/offeveryone'):
-        # Altere o valor de enviar_everyone para False quando o comando /offeveryone for recebido
         enviar_everyone = False
         await mensagem.channel.send("O envio de mensagens @everyone foi desativado.")
         
     elif mensagem.content.startswith('/oneveryone'):
-        # Altere o valor de enviar_everyone para True quando o comando /oneveryone for recebido
         enviar_everyone = True
         await mensagem.channel.send("O envio de mensagens @everyone foi reativado.")
+    
+    elif mensagem.content.startswith('/offavisodm'):
+        enviar_dm = False
+        await mensagem.channel.send("O envio de avisos por DM foi desativado.")
+        
+    elif mensagem.content.startswith('/onavisodm'):
+        enviar_dm = True
+        await mensagem.channel.send("O envio de avisos por DM foi reativado.")
+    
+    elif mensagem.content.startswith('/idignore'):
+        ids_para_ignorar = mensagem.content.split()[1:]  # Pega todos os IDs após o comando /idignore
+        if ids_para_ignorar:
+            ids_ignorados.extend(ids_para_ignorar)
+            await mensagem.channel.send(f"Os seguintes IDs foram adicionados à lista de ignorados: {', '.join(ids_para_ignorar)}")
+        else:
+            await mensagem.channel.send("Por favor, forneça pelo menos um ID para ignorar. Exemplo: /idignore 11111111111111111")
+    
+    elif mensagem.content.startswith('/readicionarids'):
+        ids_para_readicionar = mensagem.content.split()[1:]  # Pega todos os IDs após o comando /readicionarids
+        if ids_para_readicionar:
+            ids_ignorados = [id for id in ids_ignorados if id not in ids_para_readicionar]
+            await mensagem.channel.send(f"Os seguintes IDs foram removidos da lista de ignorados: {', '.join(ids_para_readicionar)}")
+        else:
+            await mensagem.channel.send("Por favor, forneça pelo menos um ID para readicionar. Exemplo: /readicionarids 11111111111111111")
+    
+    elif mensagem.content.startswith('/idcheckpoint'):
+        id_canal_checkpoint = mensagem.content.split()[1:]  # Pega o ID após o comando /idcheckpoint
+        if id_canal_checkpoint:
+            canal_checkpoint_id = int(id_canal_checkpoint[0])
+            await mensagem.channel.send(f"O ID do canal de checkpoint foi definido como: {canal_checkpoint_id}")
+        else:
+            await mensagem.channel.send("Por favor, forneça um ID para o canal de checkpoint. Exemplo: /idcheckpoint 1158343397279543327")
+    
+    elif mensagem.content.startswith('/idplanilha'):
+        id_canal_planilha = mensagem.content.split()[1:]  # Pega o ID após o comando /idplanilha
+        if id_canal_planilha:
+            canal_planilha_id = int(id_canal_planilha[0])
+            await mensagem.channel.send(f"O ID do canal da planilha foi definido como: {canal_planilha_id}")
+        else:
+            await mensagem.channel.send("Por favor, forneça um ID para o canal da planilha. Exemplo: /idplanilha 1158543934021173258")
     
     if mensagem.content.startswith('/linkbot'):
         await envia_link_bot(mensagem)
@@ -103,7 +153,7 @@ async def on_message(mensagem):
             'Estou funcionando perfeitamente! Meu status é {0}'.format(
                 cliente_discord.status))
         
-    if mensagem.channel.id == canal_alvo_id:
+    if mensagem.channel.id == canal_checkpoint_id:
         await processa_mensagem_canal_alvo(mensagem)
     elif mensagem.channel.id == canal_planilha_id and mensagem.content.strip() == '/checkpoint':
         await envia_planilha(mensagem)
@@ -114,7 +164,7 @@ async def envia_link_bot(mensagem):
     Função para enviar o link do bot quando o comando /linkbot é recebido.
     """
     link = f"https://discord.com/api/oauth2/authorize?client_id={cliente_discord.user.id}&permissions=0&scope=bot"
-    await mensagem.channel.send(f"Aqui está o link: {link}")
+    await mensagem.channel.send(f"Aqui me adicione no seu servidor chefinho prometo ser uma boa menine: {link}")
 
 
 async def processa_mensagem_canal_alvo(mensagem):
