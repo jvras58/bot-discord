@@ -225,6 +225,19 @@ async def envia_planilha(mensagem):
             await mensagem.channel.send("Aqui está o checkpoint de hoje:", file=discord.File(f, 'checkpoint.xlsx'))
         # apaga do arquivo local depois de enviado para não encher 
         os.remove('checkpoint.xlsx')
+
+@cliente_discord.event
+async def on_guild_join(guild):
+    """
+    Função para lidar quando o bot é adicionado a um servidor.
+    """
+    # Abre o arquivo 'explicativo.md' e lê seu conteúdo
+    with open('explicativo.md', 'r') as file:
+        explicativo = file.read()
+
+    # Envia o conteúdo do arquivo 'explicativo.md' no canal do sistema do servidor
+    if guild.system_channel is not None:
+        await guild.system_channel.send(explicativo)
         
 while True:
     try:
