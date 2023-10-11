@@ -231,13 +231,11 @@ async def on_guild_join(guild):
     """
     Função para lidar quando o bot é adicionado a um servidor.
     """
-    # Abre o arquivo 'explicativo.md' e lê seu conteúdo
-    with open('explicativo.md', 'r') as file:
-        explicativo = file.read()
-
-    # Envia o conteúdo do arquivo 'explicativo.md' no canal do sistema do servidor
+    # Envia o arquivo 'explicativo.md' no canal do sistema do servidor
     if guild.system_channel is not None:
-        await guild.system_channel.send(explicativo)
+        with open('explicativo.md', 'rb') as file:
+            await guild.system_channel.send("Aqui está a introdução do bot:", file=discord.File(file, 'explicativo.md'))
+
         
 while True:
     try:
