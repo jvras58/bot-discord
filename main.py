@@ -91,12 +91,11 @@ async def on_message(mensagem):
     if isinstance(mensagem.channel, discord.DMChannel):
         if mensagem.content.startswith('/linkbot'):
             await envia_link_bot(mensagem)
-       
         elif mensagem.content.startswith('/status'):
             await mensagem.channel.send(
                 'Estou funcionando perfeitamente! Meu status é {0}'.format(
                     cliente_discord.status))
-       
+            
         elif mensagem.content.startswith('/dm'):
             partes = mensagem.content.split()
             if len(partes) >= 3:
@@ -105,15 +104,15 @@ async def on_message(mensagem):
                 usuario = cliente_discord.get_user(id_usuario)
                 if usuario:
                     await usuario.send(texto)
-                    #await mensagem.channel.send(f"Mensagem enviada para o usuário com ID {id_usuario}.")
+                    await mensagem.channel.send(f"Mensagem enviada para o usuário com ID {id_usuario}.")
                 else:
                     await mensagem.channel.send(f"Não foi possível encontrar o usuário com ID {id_usuario}.")
             else:
                 await mensagem.channel.send("Por favor, forneça um ID de usuário e uma mensagem. Exemplo: /dm 11111111111111111 Olá!")
 
         elif mensagem.content.startswith('/comousar'):
-            with open('explicativo.md', 'rb') as file:
-                await mensagem.channel.send("Aqui está a introdução do bot:", file=discord.File(file, 'explicativo.md'))
+            with open('comomeusar.md', 'rb') as file:
+                await mensagem.channel.send("Aqui está a introdução do bot:", file=discord.File(file, 'comomeusar.md'))
         return
     
     if mensagem.content.startswith('/offeveryone'):
@@ -206,7 +205,7 @@ async def processa_mensagem_canal_alvo(mensagem):
                     data_envio = mensagem.created_at
                     data_envio_sem_fuso_horario = data_envio.replace(tzinfo=None)
                     # print com a mensagem capturada para testes
-                    # await mensagem.channel.send(f'O usuário {nome_usuario} com ID {id_usuario} enviou um emoji: {emojis[0]}')
+                    await mensagem.channel.send(f'O usuário {nome_usuario} com ID {id_usuario} enviou um emoji: {emojis[0]}')
                     
                     # O .loc é usado para acessar linhas e colunas por rótulo len(dados) retorna o número de linhas no DataFrame (então Adiciona uma nova linha ao DataFrame 'dados')
                     dados.loc[len(dados)] = [id_usuario, nome_usuario, emojis[0], data_envio_sem_fuso_horario]

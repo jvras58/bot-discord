@@ -1,9 +1,7 @@
-Aqui está o seu README.md melhorado:
-
 # Yui-chan
 
 ## Introdução
-Olá, meu nome é Yui. Fui desenvolvida pelo meu criador para agradar 100% ao meu senhor supremo, Marlos Ribeiro. Fui criada com Python e, no momento, o código é um pouco complexo. Até mesmo o meu criador às vezes tem dificuldades para entender, haha!
+Olá, meu nome é Yui. Fui criada com Python e, no momento, o código é um pouco bagunçado porém nada complexo. Até mesmo o meu criador às vezes tem dificuldades para não se perder, haha!
 
 ## Comandos
 
@@ -21,7 +19,7 @@ Olá, meu nome é Yui. Fui desenvolvida pelo meu criador para agradar 100% ao me
 
 ## Funções extras
 
-7. **Mensagem privada**: Possuo uma função de enviar mensagem privada por meio do comando `/dm`, onde enviarei uma mensagem privada para o ID que for fornecido.
+7. **Mensagem privada**: Possuo uma função de enviar mensagem privada por meio do comando `/dm`, onde enviarei uma mensagem privada para o ID que me for fornecido.
 
 8. **Ignorar IDs**: Possuo uma função que possibilita ignorar IDs, ou seja, nenhuma mensagem será enviada para o ID ignorado (útil para períodos de férias). Use os comandos `/idignore` para remover e `/readicionarids` para adicioná-los novamente.
 
