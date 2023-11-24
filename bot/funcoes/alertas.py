@@ -17,13 +17,13 @@ async def alerta_checkpoint(cliente_discord, conector_discord):
         else:
             await asyncio.sleep(1)
 
-
+#FIXME: VERIFICAR SE TEM ALGUM ERRO QUANDO O CHECKPOINT DE TODOS É ENVIADO
 async def verificar_checkpoints_nao_enviados(cliente_discord, conector_discord, dados):
     await cliente_discord.wait_until_ready()
     canal_alvo = cliente_discord.get_channel(1158343397279543327) #FIXME: hardcoded channel id deveria vir do conector_discord como alerta_checkpoint faz
     while not cliente_discord.is_closed():
         agora = datetime.datetime.now()
-        if agora.weekday() < 5 and agora.hour == 15 and agora.minute == 45:
+        if agora.weekday() < 5 and agora.hour == 16 and agora.minute == 44:
             if canal_alvo is not None:
                 print("O canal alvo existe")
                 # Lista de usuários que já enviaram o checkpoint
@@ -36,7 +36,7 @@ async def verificar_checkpoints_nao_enviados(cliente_discord, conector_discord, 
                         # Verifica se o membro pode ver o canal de checkpoint
                         if canal_alvo.permissions_for(membro).read_messages:
                             # Envia mensagem privada para usuários que não enviaram o checkpoint
-                            if conector_discord.enviar_dm:
+                            if conector_discord.enviar_dm and membro != cliente_discord.user:
                                 try:
                                     await membro.send("Você não enviou o checkpoint hoje! Por favor, envie o checkpoint.")
                                 except discord.errors.HTTPException as e:
