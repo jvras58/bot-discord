@@ -4,13 +4,22 @@ import discord
 import pandas as pd
 cliente_discord = discord.Client(intents=discord.Intents.all())
 # df para armazenar os dados pegos pelo bot
-dados = pd.DataFrame(columns=['ID do Usuário', 'Nome do Usuário', 'Emoji', 'Data de Envio'])
+dados = pd.DataFrame(columns=['id_usuario', 'nome_usuario', 'emojis', 'Data de Envio','ontem_eu', 'hj_pretendo', 'preciso_de_ajuda_com'])
 
 def salvar_dados(dados):
     """
     Função para salvar os dados em uma planilha Excel.
     """
     dados.to_excel('checkpoint.xlsx', index=False)
+
+#TODO: PEGAR MENSAGENS ANTERIORES DO CANAL DE CHECKPOINT E SALVAR EM UMA PLANILHA DIFERNTE DA DO CHECKPOINT DO DIA
+'''
+def salvar_dados_anteriores(dados):
+    """
+    Função para salvar os dados em uma planilha Excel.
+    """
+    dados.to_excel('checkpoint2.xlsx', index=False)
+'''
 
 async def envia_planilha(mensagem):
     """
