@@ -16,13 +16,20 @@ cliente_discord = discord.Client(intents=discord.Intents.all())
 conector_discord = ConectorDiscord()
 
 # df para armazenar os dados pegos pelo bot
-dados = pd.DataFrame(columns=['ID do Usuário', 'Nome do Usuário', 'Emoji', 'Data de Envio'])
+dados = pd.DataFrame(columns=['ID do Usuário', 'Nome do Usuário', 'Emoji', 'Data de Envio','Ontem eu', 'Hoje eu pretendo', 'Preciso de ajuda com'])
+dados2 = pd.DataFrame(columns=['ID do Usuário', 'Nome do Usuário', 'Emoji', 'Data de Envio','Ontem eu', 'Hoje eu pretendo', 'Preciso de ajuda com'])
 
 def salvar_dados():
     """
     Função para salvar os dados em uma planilha Excel.
     """
     dados.to_excel('checkpoint.xlsx', index=False)
+
+def salvar_dados_anteriores():
+    """
+    Função para salvar os dados em uma planilha Excel.
+    """
+    dados2.to_excel('checkpoint_anterior.xlsx', index=False)
 
 async def alerta_checkpoint():
     """
@@ -68,9 +75,11 @@ async def on_ready():
     Função para imprimir uma mensagem quando o bot estiver pronto é gerenciar as tasks.
     """
     print('Logado como {0.user}'.format(cliente_discord))
-    # criar a tarefa pro bot ficar executando: 
-    cliente_discord.loop.create_task(alerta_checkpoint())
-    cliente_discord.loop.create_task(verificar_checkpoints_nao_enviados())
+    # criar a tarefa pro bot ficar executando:
+    await processa_mensagens_anteriores()
+    #FIXME: DESABILITADO POR ENQUANTO POIS SE NÃO ME ENGANO ESTÃO COM ERRO É NO MOMENTO MARLOS NÃO PEDIU ISSO TBM..
+    # cliente_discord.loop.create_task(alerta_checkpoint())
+    # cliente_discord.loop.create_task(verificar_checkpoints_nao_enviados())
 
 
 @cliente_discord.event
@@ -170,6 +179,7 @@ async def on_message(mensagem):
         await envia_planilha(mensagem)
 
 
+
 async def envia_link_bot(mensagem):
     """
     Função para enviar o link do bot quando o comando /linkbot é recebido.
@@ -184,44 +194,120 @@ async def processa_mensagem_canal_alvo(mensagem):
     """
     linhas = mensagem.content.split('\n')
     if len(linhas) == 4:
-        primeira_linha = linhas[0]
-        if primeira_linha.startswith('- **Hj estou') or primeira_linha.startswith('Hj estou:') or primeira_linha.startswith('- Hj estou:'):
-            partes = primeira_linha.split(':')
+        id_usuario = mensagem.author.id
+        nome_usuario = mensagem.author.name
+        #FIXME: AJUSTES NO FUSO HORARIO AINDA SÃO NECESSARIOS
+        data_envio = mensagem.created_at
+        data_envio_sem_fuso_horario = data_envio.replace(tzinfo=None)
+
+        hj_estou = linhas[0]
+        ontem_eu = linhas[1].split(':')[-1].strip()
+        hj_pretendo = linhas[2].split(':')[-1].strip()
+        preciso_de_ajuda_com = linhas[3].split(':')[-1].strip()
+
+        if preciso_de_ajuda_com and preciso_de_ajuda_com != '-' and preciso_de_ajuda_com != 'nada' and preciso_de_ajuda_com != 'por enquanto nada':
+            preciso_de_ajuda_com = preciso_de_ajuda_com
+        else:
+            preciso_de_ajuda_com = None 
+
+
+        if hj_estou.startswith('- **Hj estou') or hj_estou.startswith('Hj estou:') or hj_estou.startswith('- Hj estou:'):
+            partes = hj_estou.split(':')
             if len(partes) > 1:
                 texto = partes[1].strip()
                 if texto.startswith('**'):
                     texto = texto[2:]
                 emojis = [char for char in texto if emoji.emoji_count(char)]
                 if emojis:
-                    id_usuario = mensagem.author.id
-                    nome_usuario = mensagem.author.name
-                    data_envio = mensagem.created_at
-                    data_envio_sem_fuso_horario = data_envio.replace(tzinfo=None)
-                    # print com a mensagem capturada para testes
+                    # Se um emoji for reconhecido
                     await mensagem.channel.send(f'O usuário {nome_usuario} com ID {id_usuario} enviou um emoji: {emojis[0]}')
                     
-                    # O .loc é usado para acessar linhas e colunas por rótulo len(dados) retorna o número de linhas no DataFrame (então Adiciona uma nova linha ao DataFrame 'dados')
-                    dados.loc[len(dados)] = [id_usuario, nome_usuario, emojis[0], data_envio_sem_fuso_horario]
-
-                    # Converte a coluna 'Data de Envio' do DataFrame para string.
+                    # Se for um emoji reconhecido
+                    dados.loc[len(dados)] = [id_usuario, nome_usuario, emojis[0], data_envio_sem_fuso_horario, ontem_eu, hj_pretendo, preciso_de_ajuda_com]
+                    dados['Data de Envio'] = dados['Data de Envio'].astype(str)
+                    salvar_dados()
+                else:
+                    # Se não for um emoji reconhecido, registre como "emoji não reconhecido" na planilha
+                    emoji_nao_reconhecido = "emoji não reconhecido"
+                    await mensagem.channel.send(f'O usuário {nome_usuario} com ID {id_usuario} enviou um emoji não reconhecido: {emoji_nao_reconhecido}')
+                    dados.loc[len(dados)] = [id_usuario, nome_usuario, emoji_nao_reconhecido, data_envio_sem_fuso_horario, ontem_eu, hj_pretendo, preciso_de_ajuda_com]
                     dados['Data de Envio'] = dados['Data de Envio'].astype(str)
                     salvar_dados()
 
+#TODO: PEGAR MENSAGENS ANTERIORES DO CANAL DE CHECKPOINT E SALVAR EM UMA PLANILHA DIFERNTE DA DO CHECKPOINT DO DIA
+
+async def processa_mensagens_anteriores():
+    """
+    Função para processar mensagens anteriores no canal alvo.
+    """
+    while conector_discord.canal_checkpoint_id is None:
+        await asyncio.sleep(1)  # aguarda 1 segundo antes de verificar novamente
+
+    canal_alvo = cliente_discord.get_channel(conector_discord.canal_checkpoint_id)
+    if canal_alvo is None:
+        print(f"Não foi possível encontrar o canal com ID {conector_discord.canal_checkpoint_id}")
+        return
+
+    mensagens_anteriores = canal_alvo.history(limit=100)  # Obtem as últimas 100 mensagens do canal
+    async for mensagem in mensagens_anteriores:
+        linhas = mensagem.content.split('\n')
+        if len(linhas) == 4:
+            id_usuario = mensagem.author.id
+            nome_usuario = mensagem.author.name
+            data_envio = mensagem.created_at
+            data_envio_sem_fuso_horario = data_envio.replace(tzinfo=None)
+
+            hj_estou = linhas[0]
+            ontem_eu = linhas[1].split(':')[-1].strip()
+            hj_pretendo = linhas[2].split(':')[-1].strip()
+            preciso_de_ajuda_com = linhas[3].split(':')[-1].strip()
+
+            if preciso_de_ajuda_com and preciso_de_ajuda_com != '-' and preciso_de_ajuda_com != 'nada' and preciso_de_ajuda_com != 'por enquanto nada':
+                preciso_de_ajuda_com = preciso_de_ajuda_com
+            else:
+                preciso_de_ajuda_com = None 
+
+            if hj_estou.startswith('**'):
+                hj_estou = hj_estou[2:]
+            emojis = [char for char in hj_estou if emoji.emoji_count(char)]
+            if emojis:
+                # Se um emoji for reconhecido
+                await mensagem.channel.send(f'O usuário {nome_usuario} com ID {id_usuario} tem checkpoint antigo: {emojis[0]}')
+                
+                # Se for um emoji reconhecido
+                dados2.loc[len(dados2)] = [id_usuario, nome_usuario, emojis[0], data_envio_sem_fuso_horario, ontem_eu, hj_pretendo, preciso_de_ajuda_com]
+                dados2['Data de Envio'] = dados2['Data de Envio'].astype(str)
+                salvar_dados_anteriores()
+            else:
+                # Se não for um emoji reconhecido, registre como "emoji não reconhecido" na planilha
+                emoji_nao_reconhecido = "emoji não reconhecido"
+                await mensagem.channel.send(f'O usuário {nome_usuario} com ID {id_usuario} tem checkpoint antigo mas o emoji não foi reconhecido: {emoji_nao_reconhecido}')
+                dados2.loc[len(dados2)] = [id_usuario, nome_usuario, emoji_nao_reconhecido, data_envio_sem_fuso_horario, ontem_eu, hj_pretendo, preciso_de_ajuda_com]
+                dados2['Data de Envio'] = dados2['Data de Envio'].astype(str)
+                salvar_dados_anteriores()
+
+
 async def envia_planilha(mensagem):
     """
-    Função para enviar a planilha quando o comando /checkpoint é recebido.
+    Função para enviar as planilhas quando o comando /checkpoint é recebido.
     """
-    # Verifica se existe usando o os 
+    # Verifica se existe o checkpoint atual
     if not os.path.exists('checkpoint.xlsx'):
-        # se não existir avisa que não existe
-        await mensagem.channel.send("Nenhum checkpoint identificado Por favor Gere um no Canal de #checkpoint! .")
+        await mensagem.channel.send("Nenhum checkpoint identificado. Por favor, gere um no canal de #checkpoint!")
     else:
-        # se existir ele envia 
-        # rb modo leitura / f arquivo aberto 
+        # Envia o checkpoint atual
         with open('checkpoint.xlsx', 'rb') as f:
             await mensagem.channel.send("Aqui está o checkpoint de hoje:", file=discord.File(f, 'checkpoint.xlsx'))
-        # apaga do arquivo local depois de enviado para não encher 
-        os.remove('checkpoint.xlsx')
+        os.remove('checkpoint.xlsx')  # Remove o arquivo localmente após o envio
+
+    # Verifica se existe o checkpoint anterior
+    if not os.path.exists('checkpoint_anterior.xlsx'):
+        return  # Ignora se o checkpoint anterior não existir
+
+    # Envia o checkpoint anterior
+    with open('checkpoint_anterior.xlsx', 'rb') as f:
+        await mensagem.channel.send("Aqui está o checkpoint anterior:", file=discord.File(f, 'checkpoint_anterior.xlsx'))
+    os.remove('checkpoint_anterior.xlsx')  # Remove o arquivo localmente após o envio
 
         
 while True:
