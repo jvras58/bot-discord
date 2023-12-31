@@ -17,13 +17,13 @@ async def alerta_checkpoint(cliente_discord, conector_discord):
         else:
             await asyncio.sleep(1)
 
-#FIXME: VERIFICAR SE TEM ALGUM ERRO QUANDO O CHECKPOINT DE TODOS É ENVIADO
+#TODO: ESSE FIXME É SO IDENTAÇÃO QUE EU PRECISO DAR UM JEITO DELE FICAR O MAXIMO PARECIDO COM O ALERTA CHECKPOINT (ONDE O if DE IS NOT É EXECUTADO QUANDO A HORA BATE)
 async def verificar_checkpoints_nao_enviados(cliente_discord, conector_discord, dados):
     await cliente_discord.wait_until_ready()
     canal_alvo = cliente_discord.get_channel(1158343397279543327) #FIXME: hardcoded channel id deveria vir do conector_discord como alerta_checkpoint faz
     while not cliente_discord.is_closed():
         agora = datetime.datetime.now()
-        if agora.weekday() < 5 and agora.hour == 16 and agora.minute == 44:
+        if agora.weekday() < 5 and agora.hour == 23 and agora.minute == 12:
             if canal_alvo is not None:
                 print("O canal alvo existe")
                 # Lista de usuários que já enviaram o checkpoint
