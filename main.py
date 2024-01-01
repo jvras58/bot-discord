@@ -114,7 +114,7 @@ async def on_message(mensagem):
 
         elif mensagem.content.startswith('/comousar'):
             with open('comomeusar.md', 'rb') as file:
-                await mensagem.channel.send("Aqui está a introdução do bot:", file=discord.File(file, 'comomeusar.md'))
+                await mensagem.channel.send("Aqui está:", file=discord.File(file, 'comomeusar.md'))
         return
     
     if mensagem.content.startswith('/offeveryone'):
@@ -233,8 +233,6 @@ async def processa_mensagem_canal_alvo(mensagem):
                     dados.loc[len(dados)] = [id_usuario, nome_usuario, emoji_nao_reconhecido, data_envio_sem_fuso_horario, ontem_eu, hj_pretendo, preciso_de_ajuda_com]
                     dados['Data de Envio'] = dados['Data de Envio'].astype(str)
                     salvar_dados()
-
-#TODO: PEGAR MENSAGENS ANTERIORES DO CANAL DE CHECKPOINT E SALVAR EM UMA PLANILHA DIFERNTE DA DO CHECKPOINT DO DIA
 
 async def processa_mensagens_anteriores():
     """
