@@ -8,9 +8,7 @@ class Settings(BaseSettings):
     Classe que representa as configurações setadas no .env da aplicação.
     """
 
-    model_config = SettingsConfigDict(
-        env_file='.env', env_file_encode='utf-8'
-        )
+    model_config = SettingsConfigDict(env_file='.env', env_file_encode='utf-8')
 
     DISCORD_TOKEN: str
 
