@@ -18,7 +18,8 @@ async def envia_dm(mensagem, cliente_discord):
     else:
         await mensagem.channel.send("Por favor, forneça um ID de usuário e uma mensagem. Exemplo: /dm 11111111111111111 Olá!")
 
-async def comousar(mensagem):
+#TODO: _ é um argumento que não será usado, mas é necessário para que o bot funcione 
+async def comousar(mensagem, _):
     with open('comomeusar.md', 'rb') as file:
         await mensagem.channel.send("Aqui está:", file=discord.File(file, 'comomeusar.md'))
 

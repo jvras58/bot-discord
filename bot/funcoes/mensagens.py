@@ -8,6 +8,7 @@ async def on_ready(cliente_discord,conector_discord,dados, alerta_checkpoint, ve
     cliente_discord.loop.create_task(verificar_checkpoints_nao_enviados(cliente_discord, conector_discord, dados))
 
 
+
 async def on_message(mensagem, cliente_discord, conector_discord, envia_link_bot, processa_mensagem_canal_alvo, envia_planilha, envia_dm, comousar, offeveryone, oneveryone, offavisodm, onavisodm, idignore, readicionarids, idcheckpoint, idplanilha):
     """
     Função para lidar com mensagens recebidas.
@@ -15,44 +16,35 @@ async def on_message(mensagem, cliente_discord, conector_discord, envia_link_bot
     if mensagem.author == cliente_discord.user:
         return
 
-    if isinstance(mensagem.channel, discord.DMChannel):
-        if mensagem.content.startswith('/linkbot'):
-            await envia_link_bot(mensagem,cliente_discord)
-        elif mensagem.content.startswith('/status'):
-            await mensagem.channel.send(
-                'Estou funcionando perfeitamente! Meu status é {0}'.format(
-                    cliente_discord.status))
-        elif mensagem.content.startswith('/dm'):
-            await envia_dm(mensagem)
-        elif mensagem.content.startswith('/comousar'):
-            await comousar(mensagem)
-        return
+    comandos = {
+        '/linkbot': envia_link_bot,
+        '/status': lambda mensagem, _: mensagem.channel.send('Estou funcionando perfeitamente! Meu status é {0}'.format(cliente_discord.status)),
+        '/dm': envia_dm,
+        '/comousar': comousar,
+        '/offeveryone': offeveryone,
+        '/oneveryone': oneveryone,
+        '/offavisodm': offavisodm,
+        '/onavisodm': onavisodm,
+        '/idignore': idignore,
+        '/readicionarids': readicionarids,
+        '/idcheckpoint': idcheckpoint,
+        '/idplanilha': idplanilha
+    }
 
-    if mensagem.content.startswith('/offeveryone'):
-        await offeveryone(mensagem, conector_discord)
-    elif mensagem.content.startswith('/oneveryone'):
-        await oneveryone(mensagem, conector_discord)
-    elif mensagem.content.startswith('/offavisodm'):
-        await offavisodm(mensagem, conector_discord)
-    elif mensagem.content.startswith('/onavisodm'):
-        await onavisodm(mensagem, conector_discord)
-    elif mensagem.content.startswith('/idignore'):
-        await idignore(mensagem, conector_discord)
-    elif mensagem.content.startswith('/readicionarids'):
-        await readicionarids(mensagem, conector_discord)
-    elif mensagem.content.startswith('/idcheckpoint'):
-        await idcheckpoint(mensagem, conector_discord)
-    elif mensagem.content.startswith('/idplanilha'):
-        await idplanilha(mensagem, conector_discord)
+    comandos_servidor_exclusivo = ['/offeveryone', '/oneveryone', '/offavisodm', '/onavisodm', '/idignore', '/readicionarids', '/idcheckpoint', '/idplanilha']
 
-    if mensagem.content.startswith('/linkbot'):
-        await envia_link_bot(mensagem,cliente_discord)
+    for comando, funcao in comandos.items():
+        if mensagem.content.startswith(comando):
+            if isinstance(mensagem.channel, discord.DMChannel):
+                if comando not in comandos_servidor_exclusivo:
+                    await funcao(mensagem, cliente_discord)
+            else:
+                if comando == '/linkbot' or comando == '/status' or comando == '/dm' or comando == '/comousar':
+                    await funcao(mensagem, cliente_discord)
+                else:
+                    await funcao(mensagem, conector_discord)
+            break
 
-    if mensagem.content.startswith('/status'):
-        await mensagem.channel.send(
-            'Estou funcionando perfeitamente! Meu status é {0}'.format(
-                cliente_discord.status))
-        
     if mensagem.channel.id == conector_discord.canal_checkpoint_id:
         await processa_mensagem_canal_alvo(mensagem)
     if mensagem.channel.id == conector_discord.canal_planilha_id and mensagem.content.strip() == '/checkpoint':

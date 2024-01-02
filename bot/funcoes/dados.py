@@ -12,14 +12,6 @@ def salvar_dados(dados):
     """
     dados.to_excel('checkpoint.xlsx', index=False)
 
-#TODO: PEGAR MENSAGENS ANTERIORES DO CANAL DE CHECKPOINT E SALVAR EM UMA PLANILHA DIFERNTE DA DO CHECKPOINT DO DIA
-'''
-def salvar_dados_anteriores(dados):
-    """
-    Função para salvar os dados em uma planilha Excel.
-    """
-    dados.to_excel('checkpoint2.xlsx', index=False)
-'''
 
 async def envia_planilha(mensagem):
     """
