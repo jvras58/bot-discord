@@ -4,12 +4,15 @@ import datetime
 import discord
 
 
+#TODO: tornar o mais dinamico possivel para marlos determinar a hora por comando
+def is_time_to_check_alerta_checkpoint():
+    agora = datetime.datetime.now()
+    return agora.weekday() < 5 and agora.hour == 18 and agora.minute == 35
+
 async def alerta_checkpoint(cliente_discord, conector_discord):
     await cliente_discord.wait_until_ready()
     while not cliente_discord.is_closed():
-        agora = datetime.datetime.now()
-        # so dias de seg a sexta
-        if agora.weekday() < 5 and agora.hour == 15 and agora.minute == 35:
+        if is_time_to_check_alerta_checkpoint():
             canal = cliente_discord.get_channel(
                 conector_discord.canal_checkpoint_id
             )
@@ -60,10 +63,10 @@ async def verificar_checkpoints_nao_enviados(
 
         await asyncio.sleep(60)  # para evitar mensagens repetidas
 
-
+#TODO: tornar o mais dinamico possivel para marlos determinar a hora por comando
 def is_time_to_check():
     agora = datetime.datetime.now()
-    return agora.weekday() < 5 and agora.hour == 16 and agora.minute == 22
+    return agora.weekday() < 5 and agora.hour == 18 and agora.minute == 29
 
 
 def filter_members(membros, usuarios_enviaram, ids_ignorados):

@@ -1,5 +1,7 @@
 import discord
 
+from funcoes.comandos import processa_mensagens_anteriores
+
 
 async def on_ready(
     cliente_discord,
@@ -9,11 +11,13 @@ async def on_ready(
     verificar_checkpoints_nao_enviados,
 ):
     print(f'{cliente_discord.user} conectado ao Discord!')
-    # TODO: DESATIVADO POIS POR ENQUANTO MARLOS NÃO PEDIU PARA ATIVAR
+    await processa_mensagens_anteriores(conector_discord, cliente_discord)
+    
+    # TODO: DESATIVADO POIS POR ENQUANTO MARLOS NÃO PEDIU
     # cliente_discord.loop.create_task(
     #     alerta_checkpoint(cliente_discord, conector_discord)
     # )
-
+    
     # cliente_discord.loop.create_task(
     #     verificar_checkpoints_nao_enviados(
     #         cliente_discord, conector_discord, dados
