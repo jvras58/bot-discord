@@ -85,13 +85,7 @@ async def envia_link_bot(mensagem, cliente_discord):
     link = "https://discord.com/api/oauth2/authorize?client_id={}&permissions=8&scope=bot".format(cliente_discord.user.id)
     await mensagem.channel.send(link)
     
-# FIXME: UMA MENSAGEM DE ISABELLE ELE NÃO PEGOU POR INTEIRO 
-'''
-A MENSAGEM QUE ELE PEGOU: 32] Otrs está online, consegui instalar a VPN, mas o Gitlab/staging/homolog ainda está fora do ar
 
-A MENSAGEM COMPLETA: Site da UFPE ta fora do ar, não vou conseguir baixar a VPN até normalizar + [Atualização às 12:32] Otrs está online, consegui instalar a VPN, mas o Gitlab/staging/homolog ainda fora do ar + [Atualização às 13:08] Gitlab e frontend homolog online, backend ainda pendente. Já consegui clonar o rep
-
-'''
 async def processa_mensagem_canal_alvo(mensagem):
     """
     Função para processar mensagens recebidas no canal alvo.
@@ -104,11 +98,11 @@ async def processa_mensagem_canal_alvo(mensagem):
         data_envio = mensagem.created_at
         data_envio_sem_fuso_horario = data_envio.replace(tzinfo=None)
         
-        #FIXME: AJUSTES NO METODO DE PEGAR AS MENSAGENS PARA EVITAR ERROS DE MENSAGENS QUE TEM MAIS DE UM :
+
         hj_estou = linhas[0]
-        ontem_eu = linhas[1].split(':')[-1].strip()
-        hj_pretendo = linhas[2].split(':')[-1].strip()
-        preciso_de_ajuda_com = linhas[3].split(':')[-1].strip()
+        ontem_eu = ':'.join(linhas[1].split(':')[1:]).strip()
+        hj_pretendo = ':'.join(linhas[2].split(':')[1:]).strip()
+        preciso_de_ajuda_com = ':'.join(linhas[3].split(':')[1:]).strip()
 
         if preciso_de_ajuda_com and preciso_de_ajuda_com != '-' and preciso_de_ajuda_com != 'nada' and preciso_de_ajuda_com != 'por enquanto nada':
             preciso_de_ajuda_com = preciso_de_ajuda_com
