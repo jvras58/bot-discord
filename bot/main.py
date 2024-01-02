@@ -1,7 +1,7 @@
 import discord
 import time
-from funcoes.mensagens import on_ready as on_ready_mensagens, on_message as on_message_mensagens, envia_link_bot, processa_mensagem_canal_alvo
-from funcoes.comandos import envia_dm, comousar, offeveryone, oneveryone, offavisodm, onavisodm, idignore, readicionarids, idcheckpoint, idplanilha
+from funcoes.mensagens import on_ready as on_ready_mensagens, on_message as on_message_mensagens
+from funcoes.comandos import envia_dm, comousar, offeveryone, oneveryone, offavisodm, onavisodm, processa_mensagem_canal_alvo, idignore, readicionarids, idcheckpoint, idplanilha,envia_link_bot
 from config.conector_discord import ConectorDiscord
 from config.config import get_settings
 from funcoes.dados import dados,envia_planilha 
