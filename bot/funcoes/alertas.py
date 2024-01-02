@@ -27,47 +27,67 @@ async def alerta_checkpoint(cliente_discord, conector_discord):
             await asyncio.sleep(1)
 
 
-# TODO: ESSE FIXME É SO IDENTAÇÃO QUE EU PRECISO DAR UM JEITO DELE FICAR O MAXIMO PARECIDO COM O ALERTA CHECKPOINT (ONDE O if DE IS NOT É EXECUTADO QUANDO A HORA BATE)
 async def verificar_checkpoints_nao_enviados(
     cliente_discord, conector_discord, dados
 ):
     await cliente_discord.wait_until_ready()
-    canal_alvo = cliente_discord.get_channel(
-        conector_discord.canal_checkpoint_id
-    )   # FIXME: hardcoded channel id deveria vir do conector_discord como alerta_checkpoint faz
     while not cliente_discord.is_closed():
-        agora = datetime.datetime.now()
-        if agora.weekday() < 5 and agora.hour == 15 and agora.minute == 45:
-            if canal_alvo is not None:
-                print('O canal alvo existe')
-                # Lista de usuários que já enviaram o checkpoint
-                usuarios_enviaram = dados['ID do Usuário'].tolist()
-                print(
-                    'IDs dos usuários que já enviaram o checkpoint:',
-                    usuarios_enviaram,
-                )
-                # Lista de membros do servidor
-                membros = canal_alvo.guild.members
-                for membro in membros:
-                    if (
-                        membro.id not in usuarios_enviaram
-                        and membro.id not in conector_discord.ids_ignorados
-                    ):
-                        # Verifica se o membro pode ver o canal de checkpoint
-                        if canal_alvo.permissions_for(membro).read_messages:
-                            # Envia mensagem privada para usuários que não enviaram o checkpoint
-                            if (
-                                conector_discord.enviar_dm
-                                and membro != cliente_discord.user
-                            ):
-                                try:
-                                    await membro.send(
-                                        'Você não enviou o checkpoint hoje! Por favor, envie o checkpoint.'
-                                    )
-                                except discord.errors.HTTPException as e:
-                                    print(
-                                        f'Erro ao enviar mensagem para o usuário {membro.id}: {e}'
-                                    )
-            await asyncio.sleep(60)  # para evitar mensagens repetidas
-        else:
+        canal_alvo = cliente_discord.get_channel(
+            conector_discord.canal_checkpoint_id
+        )
+        # print(f'Canal alvo: {canal_alvo}')
+
+        if not is_time_to_check():
             await asyncio.sleep(1)
+            continue
+
+        if canal_alvo is None:
+            await asyncio.sleep(60)
+            continue
+
+        # print('O canal alvo existe')
+        usuarios_enviaram = dados['id_usuario'].tolist()
+        # print('IDs dos usuários que já enviaram o checkpoint:', usuarios_enviaram)
+
+        membros = canal_alvo.guild.members
+        membros_para_alertar = filter_members(
+            membros, usuarios_enviaram, conector_discord.ids_ignorados
+        )
+
+        await send_messages(
+            membros_para_alertar, cliente_discord, conector_discord, canal_alvo
+        )
+
+        await asyncio.sleep(60)  # para evitar mensagens repetidas
+
+
+def is_time_to_check():
+    agora = datetime.datetime.now()
+    return agora.weekday() < 5 and agora.hour == 16 and agora.minute == 22
+
+
+def filter_members(membros, usuarios_enviaram, ids_ignorados):
+    return [
+        membro
+        for membro in membros
+        if membro.id not in usuarios_enviaram
+        and membro.id not in ids_ignorados
+    ]
+
+
+async def send_messages(
+    membros, cliente_discord, conector_discord, canal_alvo
+):
+    for membro in membros:
+        if not canal_alvo.permissions_for(membro).read_messages or membro.bot:
+            continue
+
+        if conector_discord.enviar_dm and membro != cliente_discord.user:
+            try:
+                await membro.send(
+                    'Você não enviou o checkpoint hoje! Por favor, envie o checkpoint.'
+                )
+            except discord.errors.HTTPException as e:
+                print(
+                    f'Erro ao enviar mensagem para o usuário {membro.id}: {e}'
+                )

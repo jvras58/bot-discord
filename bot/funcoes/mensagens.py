@@ -9,12 +9,11 @@ async def on_ready(
     verificar_checkpoints_nao_enviados,
 ):
     print(f'{cliente_discord.user} conectado ao Discord!')
-    #TODO: DESATIVADO POIS POR ENQUANTO MARLOS NÃO PEDIU
+    # TODO: DESATIVADO POIS POR ENQUANTO MARLOS NÃO PEDIU PARA ATIVAR
     # cliente_discord.loop.create_task(
     #     alerta_checkpoint(cliente_discord, conector_discord)
     # )
-    
-    # FIXME: ESTA FUNÇÃO NÃO ESTA RESPONDENDO BEM AINDA... PRECISA DE AJUSTES
+
     # cliente_discord.loop.create_task(
     #     verificar_checkpoints_nao_enviados(
     #         cliente_discord, conector_discord, dados

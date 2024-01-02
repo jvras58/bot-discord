@@ -167,7 +167,6 @@ async def processa_mensagem_canal_alvo(mensagem):
             and preciso_de_ajuda_com != 'nda'
             and preciso_de_ajuda_com != 'nd'
             and preciso_de_ajuda_com != 'Por enquanto, nada.'
-            
         ):
             preciso_de_ajuda_com = preciso_de_ajuda_com
         else:
