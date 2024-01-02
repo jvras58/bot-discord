@@ -56,13 +56,20 @@ async def on_message(mensagem, cliente_discord, conector_discord, envia_link_bot
                 cliente_discord.status))
     #FIXME: A FUNÇAO PROCESSA_MENSAGEM_CANAL_ALVO ESTÁ FUNCIONANDO POREM NÃO ESTÁ ENVIANDO DE VOLTA A PLANILHA PARA O /idplanilha com /checkpoint
     #TODO: O QUE ESTA FALTANDO ENTRE ESSA on_message1 PARA A MODULARIZADA FUNCIONAR??
+    #TODO:  O PROBLEMA conector_discord.canal_planilha_id NÃO ESTA SENDO ATUALIZADO... PORQUE???
     if mensagem.channel.id == conector_discord.canal_checkpoint_id:
         await processa_mensagem_canal_alvo(mensagem)
-    elif mensagem.channel.id == conector_discord.canal_planilha_id and mensagem.content.strip() == '/checkpoint':
+    print("Antes de chamar envia_planilha")
+    print(f"mensagem.channel.id: {mensagem.channel.id}")
+    print(f"conector_discord.canal_planilha_id: {conector_discord.canal_planilha_id}")
+    print(f"mensagem.content: {mensagem.content.strip()}")
+    if mensagem.channel.id == conector_discord.canal_planilha_id and mensagem.content.strip() == '/checkpoint':
+        print("Chamando envia_planilha")
         await envia_planilha(mensagem)
+        print("Depois de chamar envia_planilha")
 
 
-
+# função 'não modularizada'
 #TODO: O QUE ESTA FALTANDO ENTRE ESSA on_message1 PARA A MODULARIZADA (on_message) FUNCIONAR??
 '''
 async def on_message1(mensagem, cliente_discord, conector_discord, envia_link_bot, processa_mensagem_canal_alvo, envia_planilha, envia_dm, comousar, offeveryone, oneveryone, offavisodm, onavisodm, idignore, readicionarids, idcheckpoint, idplanilha):
@@ -154,11 +161,18 @@ async def on_message1(mensagem, cliente_discord, conector_discord, envia_link_bo
         await mensagem.channel.send(
             'Estou funcionando perfeitamente! Meu status é {0}'.format(
                 cliente_discord.status))
-        
+
+    #TODO:  O PROBLEMA conector_discord.canal_planilha_id NÃO ESTA SENDO ATUALIZADO NA VERSÃO DESSE MESMO CODIGO MAIS MODULARIZADO...
     if mensagem.channel.id == conector_discord.canal_checkpoint_id:
         await processa_mensagem_canal_alvo(mensagem)
-    elif mensagem.channel.id == conector_discord.canal_planilha_id and mensagem.content.strip() == '/checkpoint':
+    print("Antes de chamar envia_planilha")
+    print(f"mensagem.channel.id: {mensagem.channel.id}")
+    print(f"conector_discord.canal_planilha_id: {conector_discord.canal_planilha_id}")
+    print(f"mensagem.content: {mensagem.content.strip()}")
+    if mensagem.channel.id == conector_discord.canal_planilha_id and mensagem.content.strip() == '/checkpoint':
+        print("Chamando envia_planilha")
         await envia_planilha(mensagem)
+        print("Depois de chamar envia_planilha")
 '''
 
 
