@@ -201,9 +201,9 @@ async def processa_mensagem_canal_alvo(mensagem):
         data_envio_sem_fuso_horario = data_envio.replace(tzinfo=None)
 
         hj_estou = linhas[0]
-        ontem_eu = linhas[1].split(':')[-1].strip()
-        hj_pretendo = linhas[2].split(':')[-1].strip()
-        preciso_de_ajuda_com = linhas[3].split(':')[-1].strip()
+        ontem_eu = ':'.join(linhas[1].split(':')[1:]).strip()
+        hj_pretendo = ':'.join(linhas[2].split(':')[1:]).strip()
+        preciso_de_ajuda_com = ':'.join(linhas[3].split(':')[1:]).strip()
 
         if preciso_de_ajuda_com and preciso_de_ajuda_com != '-' and preciso_de_ajuda_com != 'nada' and preciso_de_ajuda_com != 'por enquanto nada':
             preciso_de_ajuda_com = preciso_de_ajuda_com
@@ -256,9 +256,9 @@ async def processa_mensagens_anteriores():
             data_envio_sem_fuso_horario = data_envio.replace(tzinfo=None)
 
             hj_estou = linhas[0]
-            ontem_eu = linhas[1].split(':')[-1].strip()
-            hj_pretendo = linhas[2].split(':')[-1].strip()
-            preciso_de_ajuda_com = linhas[3].split(':')[-1].strip()
+            ontem_eu = ':'.join(linhas[1].split(':')[1:]).strip()
+            hj_pretendo = ':'.join(linhas[2].split(':')[1:]).strip()
+            preciso_de_ajuda_com = ':'.join(linhas[3].split(':')[1:]).strip()
 
             if preciso_de_ajuda_com and preciso_de_ajuda_com != '-' and preciso_de_ajuda_com != 'nada' and preciso_de_ajuda_com != 'por enquanto nada':
                 preciso_de_ajuda_com = preciso_de_ajuda_com
