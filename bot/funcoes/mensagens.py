@@ -189,9 +189,8 @@ async def on_message(
         await envia_planilha(mensagem)
 '''
 
-#TODO: versão 2 com adminstração de todos os comandos bloqueados [em fase de teste]
+#TODO: versão 2 com adminstração de todos os comandos bloqueados [em fase de teste] 
 '''
-#versão mais restritiva possivel
 for comando, funcao in comandos.items():
     if mensagem.content.startswith(comando):
         if isinstance(mensagem.channel, discord.DMChannel):
