@@ -280,7 +280,7 @@ async def processa_mensagem_canal_alvo(mensagem):
                 if emojis:
                     # Se um emoji for reconhecido
                     await mensagem.channel.send(
-                        f'O usuário {nome_usuario} enviou um checkpoint com o emoji: {emojis[0]}'
+                        f'O usuário {mensagem.author.mention} enviou um checkpoint com o emoji: {emojis[0]}'
                     )
 
                     # Se for um emoji reconhecido
@@ -299,7 +299,7 @@ async def processa_mensagem_canal_alvo(mensagem):
                     # Se não for um emoji reconhecido, registre como "emoji não reconhecido" na planilha
                     emoji_nao_reconhecido = 'emoji não reconhecido'
                     await mensagem.channel.send(
-                        f'O usuário {nome_usuario} enviou um checkpoint com um emoji não reconhecido'
+                        f'O usuário {mensagem.author.mention} enviou um checkpoint com um emoji não reconhecido'
                     )
                     dados.loc[len(dados)] = [
                         id_usuario,
@@ -375,7 +375,7 @@ async def processa_mensagens_anteriores(conector_discord, cliente_discord):
             if emojis:
                 # Se um emoji for reconhecido
                 await mensagem.channel.send(
-                    f'O usuário {nome_usuario} tem checkpoint antigo contendo o emoji:{emojis[0]}'
+                    f'O usuário {mensagem.author.mention} tem checkpoint antigo contendo o emoji:{emojis[0]}'
                 )
 
                 # Se for um emoji reconhecido
@@ -396,7 +396,7 @@ async def processa_mensagens_anteriores(conector_discord, cliente_discord):
                 # Se não for um emoji reconhecido, registre como "emoji não reconhecido" na planilha
                 emoji_nao_reconhecido = 'emoji não reconhecido'
                 await mensagem.channel.send(
-                    f'O usuário {nome_usuario} tem checkpoint antigo mas o emoji não foi reconhecido'
+                    f'O usuário {mensagem.author.mention} tem checkpoint antigo mas o emoji não foi reconhecido'
                 )
                 dados_anteriores.loc[len(dados_anteriores)] = [
                     id_usuario,

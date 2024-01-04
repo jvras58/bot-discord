@@ -3,7 +3,6 @@ import os
 import discord
 import pandas as pd
 
-# cliente_discord = discord.Client(intents=discord.Intents.all())
 
 # df's para armazenar os dados pegos pelo bot
 dados = pd.DataFrame(
