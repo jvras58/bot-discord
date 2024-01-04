@@ -1,6 +1,4 @@
 import asyncio
-
-# import discord
 import emoji
 from funcoes.dados import (
     dados,
@@ -53,9 +51,10 @@ async def comousar(mensagem, _):
         sections = content.split('\n## ')
         for section in sections:
             if section.strip():  # Verifica se a seção não está em branco
-                section = '## ' + section  # Adiciona '## ' de volta ao início de cada seção
+                section = (
+                    '## ' + section
+                )  # Adiciona '## ' de volta ao início de cada seção
                 await mensagem.channel.send(section)
-
 
 
 async def offeveryone(mensagem, conector_discord):
@@ -336,7 +335,7 @@ async def processa_mensagens_anteriores(conector_discord, cliente_discord):
             f'Não foi possível encontrar o canal com ID {conector_discord.canal_checkpoint_id}'
         )
         return
-    #FIXME: CUIDADO COM O LIMIT DE MENSAGENS ANTERIORES ESTA DEFINIDO PARA 2500
+    # FIXME: CUIDADO COM O LIMIT DE MENSAGENS ANTERIORES ESTA DEFINIDO PARA 2500
     mensagens_anteriores = canal_alvo.history(
         limit=2500
     )  # Obtem as últimas 100 mensagens do canal
