@@ -1,6 +1,6 @@
 import asyncio
 
-import discord
+# import discord
 import emoji
 from funcoes.dados import (
     dados,
@@ -11,6 +11,13 @@ from funcoes.dados import (
 
 
 async def envia_dm(mensagem, cliente_discord):
+    """
+    Envia uma mensagem direta para um usuário no Discord.
+
+    Parâmetros:
+    - mensagem: O objeto de mensagem que acionou o comando.
+    - cliente_discord: O cliente do Discord.
+    """
     partes = mensagem.content.split()
     if len(partes) >= 3:
         id_usuario = int(partes[1])
@@ -33,13 +40,32 @@ async def envia_dm(mensagem, cliente_discord):
 
 # TODO: _ é um argumento que não será usado, mas é necessário para que o bot funcione
 async def comousar(mensagem, _):
-    with open('comomeusar.md', 'rb') as file:
-        await mensagem.channel.send(
-            'Aqui está:', file=discord.File(file, 'comomeusar.md')
-        )
+    """
+    Envia seções do arquivo com instruções de como usar o bot.
+
+    Parâmetros:
+    - mensagem: a mensagem recebida pelo bot.
+    - _: um parâmetro não utilizado.
+    """
+    with open('comomeusar.md', 'r', encoding='utf-8') as file:
+        content = file.read()
+
+        sections = content.split('\n## ')
+        for section in sections:
+            if section.strip():  # Verifica se a seção não está em branco
+                section = '## ' + section  # Adiciona '## ' de volta ao início de cada seção
+                await mensagem.channel.send(section)
+
 
 
 async def offeveryone(mensagem, conector_discord):
+    """
+    Desativa o envio de mensagens @everyone.
+
+    Parâmetros:
+        - mensagem: a mensagem recebida pelo bot.
+        - cliente_discord: O cliente do Discord.
+    """
     conector_discord.enviar_everyone = False
     await mensagem.channel.send(
         'O envio de mensagens @everyone foi desativado.'
@@ -47,6 +73,13 @@ async def offeveryone(mensagem, conector_discord):
 
 
 async def oneveryone(mensagem, conector_discord):
+    """
+    Ativa o envio de mensagens @everyone e envia uma mensagem de confirmação.
+
+    Parâmetros:
+    - mensagem: a mensagem recebida pelo bot.
+    - cliente_discord: O cliente do Discord.
+    """
     conector_discord.enviar_everyone = True
     await mensagem.channel.send(
         'O envio de mensagens @everyone foi reativado.'
@@ -54,16 +87,38 @@ async def oneveryone(mensagem, conector_discord):
 
 
 async def offavisodm(mensagem, conector_discord):
+    """
+    Desativa o envio de avisos por DM.
+
+    Parâmetros:
+    - mensagem: a mensagem recebida pelo bot.
+    - conector_discord: O conector do Discord.
+    """
     conector_discord.enviar_dm = False
     await mensagem.channel.send('O envio de avisos por DM foi desativado.')
 
 
 async def onavisodm(mensagem, conector_discord):
+    """
+    ativa o envio de avisos por DM.
+
+    Parâmetros:
+    - mensagem: a mensagem recebida pelo bot.
+    - conector_discord: O conector do Discord.
+    """
     conector_discord.enviar_dm = True
     await mensagem.channel.send('O envio de avisos por DM foi reativado.')
 
 
 async def idignore(mensagem, conector_discord):
+    """
+    Função que adiciona IDs à lista de ignorados.
+
+    Parâmetros:
+    - mensagem: O objeto de mensagem recebida pelo bot.
+    - conector_discord: O conector do Discord.
+
+    """
     ids_para_ignorar = mensagem.content.split()[
         1:
     ]  # Pega todos os IDs após o comando /idignore
@@ -90,6 +145,14 @@ async def idignore(mensagem, conector_discord):
 
 
 async def readicionarids(mensagem, conector_discord):
+    """
+    Função que readiciona IDs para a função verificar checkpoint não enviados.
+
+    Parâmetros:
+    - mensagem: O objeto de mensagem recebida pelo bot.
+    - conector_discord: O conector do Discord.
+
+    """
     ids_para_readicionar = mensagem.content.split()[
         1:
     ]  # Pega todos os IDs após o comando /readicionarids
@@ -109,6 +172,13 @@ async def readicionarids(mensagem, conector_discord):
 
 
 async def idcheckpoint(mensagem, conector_discord):
+    """
+    Define o ID do canal de checkpoint.
+
+    Parâmetros:
+    - mensagem: O objeto da mensagem recebida.
+    - conector_discord: O objeto do conector do Discord.
+    """
     id_canal_checkpoint = mensagem.content.split()[
         1:
     ]  # Pega o ID após o comando /idcheckpoint
@@ -124,6 +194,13 @@ async def idcheckpoint(mensagem, conector_discord):
 
 
 async def idplanilha(mensagem, conector_discord):
+    """
+    Define o ID do canal para receber as planilhas.
+
+    Parâmetros:
+    - mensagem: O objeto da mensagem recebida.
+    - conector_discord: O objeto do conector do Discord.
+    """
     id_planilha = mensagem.content.split()[
         1:
     ]  # Pega o ID após o comando /idplanilha
@@ -139,6 +216,13 @@ async def idplanilha(mensagem, conector_discord):
 
 
 async def envia_link_bot(mensagem, cliente_discord):
+    """
+    Envia o link de convite do bot para o canal da mensagem.
+
+    Parâmetros:
+    - mensagem: A mensagem recebida pelo bot.
+    - cliente_discord: O cliente Discord do bot.
+    """
     link = 'https://discord.com/api/oauth2/authorize?client_id={}&permissions=8&scope=bot'.format(
         cliente_discord.user.id
     )
@@ -148,6 +232,10 @@ async def envia_link_bot(mensagem, cliente_discord):
 async def processa_mensagem_canal_alvo(mensagem):
     """
     Função para processar mensagens recebidas no canal alvo.
+
+    Parâmetros:
+        mensagem (discord.Message): A mensagem a ser processada.
+
     """
     linhas = mensagem.content.split('\n')
     if len(linhas) == 4:
@@ -193,7 +281,7 @@ async def processa_mensagem_canal_alvo(mensagem):
                 if emojis:
                     # Se um emoji for reconhecido
                     await mensagem.channel.send(
-                        f'O usuário {nome_usuario} com ID {id_usuario} enviou um emoji: {emojis[0]}'
+                        f'O usuário {nome_usuario} enviou um checkpoint com o emoji: {emojis[0]}'
                     )
 
                     # Se for um emoji reconhecido
@@ -212,7 +300,7 @@ async def processa_mensagem_canal_alvo(mensagem):
                     # Se não for um emoji reconhecido, registre como "emoji não reconhecido" na planilha
                     emoji_nao_reconhecido = 'emoji não reconhecido'
                     await mensagem.channel.send(
-                        f'O usuário {nome_usuario} com ID {id_usuario} enviou um emoji não reconhecido: {emoji_nao_reconhecido}'
+                        f'O usuário {nome_usuario} enviou um checkpoint com um emoji não reconhecido'
                     )
                     dados.loc[len(dados)] = [
                         id_usuario,
@@ -229,7 +317,11 @@ async def processa_mensagem_canal_alvo(mensagem):
 
 async def processa_mensagens_anteriores(conector_discord, cliente_discord):
     """
-    Função para processar mensagens anteriores no canal alvo.
+    Processa as mensagens anteriores de um canal do Discord.
+
+    Args:
+        conector_discord: O conector do Discord.
+        cliente_discord: O cliente do Discord.
     """
     while conector_discord.canal_checkpoint_id is None:
         await asyncio.sleep(
@@ -244,9 +336,9 @@ async def processa_mensagens_anteriores(conector_discord, cliente_discord):
             f'Não foi possível encontrar o canal com ID {conector_discord.canal_checkpoint_id}'
         )
         return
-
+    #FIXME: CUIDADO COM O LIMIT DE MENSAGENS ANTERIORES ESTA DEFINIDO PARA 2500
     mensagens_anteriores = canal_alvo.history(
-        limit=100
+        limit=2500
     )  # Obtem as últimas 100 mensagens do canal
     async for mensagem in mensagens_anteriores:
         linhas = mensagem.content.split('\n')
@@ -284,7 +376,7 @@ async def processa_mensagens_anteriores(conector_discord, cliente_discord):
             if emojis:
                 # Se um emoji for reconhecido
                 await mensagem.channel.send(
-                    f'O usuário {nome_usuario} com ID {id_usuario} tem checkpoint antigo: {emojis[0]}'
+                    f'O usuário {nome_usuario} tem checkpoint antigo contendo o emoji:{emojis[0]}'
                 )
 
                 # Se for um emoji reconhecido
@@ -305,7 +397,7 @@ async def processa_mensagens_anteriores(conector_discord, cliente_discord):
                 # Se não for um emoji reconhecido, registre como "emoji não reconhecido" na planilha
                 emoji_nao_reconhecido = 'emoji não reconhecido'
                 await mensagem.channel.send(
-                    f'O usuário {nome_usuario} com ID {id_usuario} tem checkpoint antigo mas o emoji não foi reconhecido: {emoji_nao_reconhecido}'
+                    f'O usuário {nome_usuario} tem checkpoint antigo mas o emoji não foi reconhecido'
                 )
                 dados_anteriores.loc[len(dados_anteriores)] = [
                     id_usuario,

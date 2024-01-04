@@ -31,6 +31,10 @@ conector_discord = ConectorDiscord()
 
 @cliente_discord.event
 async def on_ready():
+    """
+    Função assíncrona que é chamada quando o bot está pronto para ser utilizado.
+    Chama a função on_ready_mensagens passando os parâmetros necessários.
+    """
     await on_ready_mensagens(
         cliente_discord,
         conector_discord,
@@ -42,6 +46,13 @@ async def on_ready():
 
 @cliente_discord.event
 async def on_message(mensagem):
+    """
+    Função que trata eventos de mensagens recebidas no cliente Discord.
+
+    Parâmetros:
+    - mensagem: A mensagem recebida pelo BOT.
+
+    """
     await on_message_mensagens(
         mensagem,
         cliente_discord,

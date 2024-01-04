@@ -1,5 +1,4 @@
 import discord
-
 from funcoes.comandos import processa_mensagens_anteriores
 
 
@@ -12,12 +11,12 @@ async def on_ready(
 ):
     print(f'{cliente_discord.user} conectado ao Discord!')
     await processa_mensagens_anteriores(conector_discord, cliente_discord)
-    
+
     # TODO: DESATIVADO POIS POR ENQUANTO MARLOS NÃO PEDIU
     # cliente_discord.loop.create_task(
     #     alerta_checkpoint(cliente_discord, conector_discord)
     # )
-    
+
     # cliente_discord.loop.create_task(
     #     verificar_checkpoints_nao_enviados(
     #         cliente_discord, conector_discord, dados
@@ -101,9 +100,9 @@ async def on_message(
         and mensagem.content.strip() == '/checkpoint'
     ):
         await envia_planilha(mensagem)
-        
 
-#TODO: versão 1 com adminstração de tags (alguns comandos liberados para todos) [em fase de teste]
+
+# TODO: versão 1 com adminstração de tags (alguns comandos liberados para todos) [em fase de teste]
 '''
 async def on_message(
     mensagem,
@@ -189,8 +188,8 @@ async def on_message(
         await envia_planilha(mensagem)
 '''
 
-#TODO: versão 2 com adminstração de todos os comandos bloqueados [em fase de teste] 
-'''
+# TODO: versão 2 com adminstração de todos os comandos bloqueados [em fase de teste]
+"""
 for comando, funcao in comandos.items():
     if mensagem.content.startswith(comando):
         if isinstance(mensagem.channel, discord.DMChannel):
@@ -211,4 +210,4 @@ for comando, funcao in comandos.items():
             else:
                 await mensagem.channel.send('Você não tem permissão para usar este comando.')
         break
-'''
+"""

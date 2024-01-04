@@ -1,4 +1,10 @@
 class ConectorDiscord:
+    """
+    Classe responsável por conectar ao Discord e gerenciar as configurações do bot.
+
+    Padrão de projeto: Singleton
+    """
+
     _instance = None
 
     def __new__(cls, *args, **kwargs):
