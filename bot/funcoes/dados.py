@@ -1,79 +1,63 @@
 import os
-
 import discord
 import pandas as pd
 
+# DataFrames para armazenar os dados pegos pelo bot
+colunas = [
+    'id_usuario',
+    'nome_usuario',
+    'emojis',
+    'Data de Envio',
+    'ontem_eu',
+    'hj_pretendo',
+    'preciso_de_ajuda_com',
+]
 
-# df's para armazenar os dados pegos pelo bot
-dados = pd.DataFrame(
-    columns=[
-        'id_usuario',
-        'nome_usuario',
-        'emojis',
-        'Data de Envio',
-        'ontem_eu',
-        'hj_pretendo',
-        'preciso_de_ajuda_com',
-    ]
-)
+dados = pd.DataFrame(columns=colunas)
+dados_anteriores = pd.DataFrame(columns=colunas)
 
-dados_anteriores = pd.DataFrame(
-    columns=[
-        'id_usuario',
-        'nome_usuario',
-        'emojis',
-        'Data de Envio',
-        'ontem_eu',
-        'hj_pretendo',
-        'preciso_de_ajuda_com',
-    ]
-)
-
-
-def salvar_dados(dados):
+# Função para salvar os dados em uma planilha Excel
+def salvar_dados(dados, nome_arquivo):
     """
-    Função para salvar os dados em uma planilha Excel.
+    Salva os dados em uma planilha Excel.
+
+    Args:
+    dados: DataFrame - Os dados a serem salvos.
+    nome_arquivo: str - Nome do arquivo a ser criado.
     """
-    dados.to_excel('checkpoint.xlsx', index=False)
+    try:
+        dados.to_excel(nome_arquivo, index=False)
+    except Exception as e:
+        print(f"Erro ao salvar os dados: {e}")
 
-
-def salvar_dados_anteriores():
-    """
-    Função para salvar os dados em uma planilha Excel.
-    """
-    dados_anteriores.to_excel('checkpoint_anteriores.xlsx', index=False)
-
-
+# Função para enviar as planilhas quando o comando /checkpoint é recebido
 async def envia_planilha(mensagem):
     """
-    Função para enviar as planilhas quando o comando /checkpoint é recebido.
+    Envia as planilhas quando o comando /checkpoint é recebido.
+
+    Args:
+    mensagem: discord.Message - A mensagem recebida que desencadeou o comando.
     """
-    # Verifica se existe o checkpoint atual
-    if not os.path.exists('checkpoint.xlsx'):
-        await mensagem.channel.send(
-            'Nenhum checkpoint identificado. Por favor, gere um no canal de #checkpoint!'
-        )
+    # Verifica e envia o checkpoint atual
+    checkpoint_atual = 'checkpoint.xlsx'
+    if not os.path.exists(checkpoint_atual):
+        await mensagem.channel.send('Nenhum checkpoint identificado. Por favor, gere um no canal de #checkpoint!')
     else:
-        # Envia o checkpoint atual
-        with open('checkpoint.xlsx', 'rb') as f:
-            await mensagem.channel.send(
-                'Aqui está o checkpoint de hoje:',
-                file=discord.File(f, 'checkpoint.xlsx'),
-            )
-        os.remove(
-            'checkpoint.xlsx'
-        )  # Remove o arquivo localmente após o envio
+        try:
+            with open(checkpoint_atual, 'rb') as f:
+                await mensagem.channel.send('Aqui está o checkpoint de hoje:', file=discord.File(f, checkpoint_atual))
+            os.remove(checkpoint_atual)
+        except Exception as e:
+            print(f"Erro ao enviar o checkpoint atual: {e}")
 
-    # Verifica se existe o checkpoint anterior
-    if not os.path.exists('checkpoint_anteriores.xlsx'):
+    # Verifica e envia o checkpoint anterior
+    checkpoint_anterior = 'checkpoint_anteriores.xlsx'
+    if not os.path.exists(checkpoint_anterior):
         return  # Ignora se o checkpoint anterior não existir
-
-    # Envia o checkpoint anterior
-    with open('checkpoint_anteriores.xlsx', 'rb') as f:
-        await mensagem.channel.send(
-            'Aqui está os checkpoint antigos:',
-            file=discord.File(f, 'checkpoint_anteriores.xlsx'),
-        )
-    os.remove(
-        'checkpoint_anteriores.xlsx'
-    )  # Remove o arquivo localmente após o envio
+    
+    try:
+        with open(checkpoint_anterior, 'rb') as f:
+            await mensagem.channel.send('Aqui estão os checkpoints antigos:', file=discord.File(f, checkpoint_anterior))
+        os.remove(checkpoint_anterior)
+    except Exception as e:
+        print(f"Erro ao enviar o checkpoint anterior: {e}")

@@ -4,7 +4,6 @@ from funcoes.dados import (
     dados,
     dados_anteriores,
     salvar_dados,
-    salvar_dados_anteriores,
 )
 
 
@@ -294,7 +293,7 @@ async def processa_mensagem_canal_alvo(mensagem):
                         preciso_de_ajuda_com,
                     ]
                     dados['Data de Envio'] = dados['Data de Envio'].astype(str)
-                    salvar_dados(dados)
+                    salvar_dados(dados, 'checkpoint.xlsx')
                 else:
                     # Se não for um emoji reconhecido, registre como "emoji não reconhecido" na planilha
                     emoji_nao_reconhecido = 'emoji não reconhecido'
@@ -311,7 +310,7 @@ async def processa_mensagem_canal_alvo(mensagem):
                         preciso_de_ajuda_com,
                     ]
                     dados['Data de Envio'] = dados['Data de Envio'].astype(str)
-                    salvar_dados(dados)
+                    salvar_dados(dados, 'checkpoint.xlsx')
 
 
 async def processa_mensagens_anteriores(conector_discord, cliente_discord):
@@ -391,7 +390,7 @@ async def processa_mensagens_anteriores(conector_discord, cliente_discord):
                 dados_anteriores['Data de Envio'] = dados_anteriores[
                     'Data de Envio'
                 ].astype(str)
-                salvar_dados_anteriores()
+                salvar_dados(dados_anteriores, 'checkpoint_anteriores.xlsx')
             else:
                 # Se não for um emoji reconhecido, registre como "emoji não reconhecido" na planilha
                 emoji_nao_reconhecido = 'emoji não reconhecido'
@@ -410,4 +409,4 @@ async def processa_mensagens_anteriores(conector_discord, cliente_discord):
                 dados_anteriores['Data de Envio'] = dados_anteriores[
                     'Data de Envio'
                 ].astype(str)
-                salvar_dados_anteriores()
+                salvar_dados(dados_anteriores, 'checkpoint_anteriores.xlsx')
