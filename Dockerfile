@@ -11,4 +11,4 @@ RUN poetry install
 
 COPY . .
 
-CMD ["poetry", "run", "python", "main.py"]
+CMD ["poetry", "run", "python", "bot/main.py"]
