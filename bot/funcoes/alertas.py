@@ -4,16 +4,25 @@ import datetime
 import discord
 
 
-# TODO: tornar o mais dinamico possivel para marlos determinar a hora por comando
-def is_time_to_check_alerta_checkpoint():
+
+def is_time_to_check_alerta_checkpoint(conector_discord):
     """
     Verifica se é hora de verificar o alerta do checkpoint.
 
-    Retorna True se for um dia útil (segunda a sexta-feira), às 11:00 da manhã.
+    Retorna True se for um dia útil (segunda a sexta-feira), no horário definido pelo comando definir_alerta.
     Caso contrário, retorna False.
     """
+    horario_alerta = conector_discord.alerta_checkpoint_horario
+    if horario_alerta is None:
+        return False
+
     agora = datetime.datetime.now()
-    return agora.weekday() < 5 and agora.hour == 11 and agora.minute == 0
+
+    return (
+        agora.weekday() < 5
+        and agora.time().hour == horario_alerta.hour
+        and agora.time().minute == horario_alerta.minute
+    )
 
 
 async def alerta_checkpoint(cliente_discord, conector_discord):
@@ -26,7 +35,7 @@ async def alerta_checkpoint(cliente_discord, conector_discord):
     """
     await cliente_discord.wait_until_ready()
     while not cliente_discord.is_closed():
-        if is_time_to_check_alerta_checkpoint():
+        if is_time_to_check_alerta_checkpoint(conector_discord):
             canal = cliente_discord.get_channel(
                 conector_discord.canal_checkpoint_id
             )
@@ -62,7 +71,7 @@ async def verificar_checkpoints_nao_enviados(
         )
         # print(f'Canal alvo: {canal_alvo}')
 
-        if not is_time_to_check():
+        if not is_time_to_check(conector_discord):
             await asyncio.sleep(1)
             continue
 
@@ -86,16 +95,25 @@ async def verificar_checkpoints_nao_enviados(
         await asyncio.sleep(60)  # para evitar mensagens repetidas
 
 
-# TODO: tornar o mais dinamico possivel para marlos determinar a hora por comando
-def is_time_to_check():
+
+def is_time_to_check(conector_discord):
     """
     Verifica se é hora de verificar o checkpoints não enviados.
 
     Retorna True se for um dia útil (segunda a sexta-feira), às 18:00 da tarde.
     Caso contrário, retorna False.
     """
+    horario_alerta = conector_discord.verificar_checkpoint_horario
+    if horario_alerta is None:
+        return False
+
     agora = datetime.datetime.now()
-    return agora.weekday() < 5 and agora.hour == 18 and agora.minute == 0
+
+    return (
+        agora.weekday() < 5
+        and agora.time().hour == horario_alerta.hour
+        and agora.time().minute == horario_alerta.minute
+    )
 
 
 def filter_members(membros, usuarios_enviaram, ids_ignorados):

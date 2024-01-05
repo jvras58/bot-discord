@@ -1,4 +1,5 @@
 import os
+
 import discord
 import pandas as pd
 
@@ -28,7 +29,8 @@ def salvar_dados(dados, nome_arquivo):
     try:
         dados.to_excel(nome_arquivo, index=False)
     except Exception as e:
-        print(f"Erro ao salvar os dados: {e}")
+        print(f'Erro ao salvar os dados: {e}')
+
 
 # Função para enviar as planilhas quando o comando /checkpoint é recebido
 async def envia_planilha(mensagem):
@@ -41,23 +43,31 @@ async def envia_planilha(mensagem):
     # Verifica e envia o checkpoint atual
     checkpoint_atual = 'checkpoint.xlsx'
     if not os.path.exists(checkpoint_atual):
-        await mensagem.channel.send('Nenhum checkpoint identificado. Por favor, gere um no canal de #checkpoint!')
+        await mensagem.channel.send(
+            'Nenhum checkpoint identificado. Por favor, gere um no canal de #checkpoint!'
+        )
     else:
         try:
             with open(checkpoint_atual, 'rb') as f:
-                await mensagem.channel.send('Aqui está o checkpoint de hoje:', file=discord.File(f, checkpoint_atual))
+                await mensagem.channel.send(
+                    'Aqui está o checkpoint de hoje:',
+                    file=discord.File(f, checkpoint_atual),
+                )
             os.remove(checkpoint_atual)
         except Exception as e:
-            print(f"Erro ao enviar o checkpoint atual: {e}")
+            print(f'Erro ao enviar o checkpoint atual: {e}')
 
     # Verifica e envia o checkpoint anterior
     checkpoint_anterior = 'checkpoint_anteriores.xlsx'
     if not os.path.exists(checkpoint_anterior):
         return  # Ignora se o checkpoint anterior não existir
-    
+
     try:
         with open(checkpoint_anterior, 'rb') as f:
-            await mensagem.channel.send('Aqui estão os checkpoints antigos:', file=discord.File(f, checkpoint_anterior))
+            await mensagem.channel.send(
+                'Aqui estão os checkpoints antigos:',
+                file=discord.File(f, checkpoint_anterior),
+            )
         os.remove(checkpoint_anterior)
     except Exception as e:
-        print(f"Erro ao enviar o checkpoint anterior: {e}")
+        print(f'Erro ao enviar o checkpoint anterior: {e}')

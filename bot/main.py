@@ -8,7 +8,9 @@ from funcoes.alertas import (
     verificar_checkpoints_nao_enviados,
 )
 from funcoes.comandos import (
+    alerta_dm_horario,
     comousar,
+    definir_alerta,
     envia_dm,
     envia_link_bot,
     idcheckpoint,
@@ -66,6 +68,8 @@ async def on_message(mensagem):
         oneveryone,
         offavisodm,
         onavisodm,
+        definir_alerta,
+        alerta_dm_horario,
         idignore,
         readicionarids,
         idcheckpoint,

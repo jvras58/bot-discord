@@ -1,7 +1,5 @@
-## Yui-chan
-
 ## Introdução
-Olá, meu nome é Yui. Fui criada com Python e aqui estão minhas funções:
+Fui criadx com Python e aqui estão minhas funções:
 
 ## Comandos
 
@@ -13,9 +11,9 @@ Olá, meu nome é Yui. Fui criada com Python e aqui estão minhas funções:
 
 4. **Checkpoint**: Para receber a planilha do checkpoint do dia, basta ir ao canal de administração e digitar `/checkpoint`. Enviarei a planilha para o canal.
 
-5. **Monitoramento de checkpoint**: Possuo uma função de monitoramento para verificar quem enviou o checkpoint e avisar quem não enviou via DM. Essa função pode ser ativada/desativada com os comandos `/offavisodm` e `/onavisodm`. O horário de envio é às 12h e nos finais de semana essa função é desativada automaticamente.
+5. **Monitoramento de checkpoint**: Possuo uma função de monitoramento para verificar quem enviou o checkpoint e avisar quem não enviou via DM. Essa função pode ser ativada/desativada com os comandos `/offavisodm` e `/onavisodm`. O horário de envio definido pelo comando `/horacheckpoint ` seguido pela hora e minuto (`/horacheckpoint HH:MM`) e nos finais de semana essa função é desativada automaticamente.
 
-6. **Mensagem @everyone**: Possuo uma função para enviar uma mensagem `@everyone` no canal do checkpoint em um horário determinado. Essa função pode ser ativada/desativada com os comandos `/offeveryone` e `/oneveryone`. O horário de envio é às 10h e nos finais de semana essa função é desativada automaticamente.
+6. **Mensagem @everyone**: Possuo uma função para enviar uma mensagem `@everyone` no canal do checkpoint em um horário determinado. Essa função pode ser ativada/desativada com os comandos `/offeveryone` e `/oneveryone`. O horário de envio definido pelo comando `/alertadm` seguido pela hora e minuto (`/alertadm HH:MM`) finais de semana essa função é desativada automaticamente.
 
 ## Funções extras
 

@@ -1,10 +1,8 @@
 import asyncio
+from datetime import datetime
+
 import emoji
-from funcoes.dados import (
-    dados,
-    dados_anteriores,
-    salvar_dados,
-)
+from funcoes.dados import dados, dados_anteriores, salvar_dados
 
 
 async def envia_dm(mensagem, cliente_discord):
@@ -84,6 +82,75 @@ async def oneveryone(mensagem, conector_discord):
     )
 
 
+async def definir_alerta(mensagem, conector_discord):
+    """
+    Define o horário do alerta de checkpoint.
+
+    Parâmetros:
+        mensagem (discord.Message): A mensagem que contém o horário a ser definido.
+        conector_discord (ConectorDiscord): O objeto que representa a conexão com o Discord.
+    """
+    # Extrai a hora e os minutos da mensagem
+    partes_mensagem = mensagem.content.split(' ', 1)
+
+    # Verifica se a mensagem tem duas partes
+    if len(partes_mensagem) < 2:
+        await mensagem.channel.send(
+            'Por favor, forneça um horário no formato HH:MM.'
+        )
+        return
+
+    hora_minutos_str = partes_mensagem[1]
+    try:
+        hora_minutos = datetime.strptime(hora_minutos_str, '%H:%M').time()
+    except ValueError:
+        await mensagem.channel.send(
+            'Por favor, forneça um horário válido. Exemplo: /horacheckpoint 12:30'
+        )
+        return
+    # Define o horário do alerta
+    conector_discord.alerta_checkpoint_horario = hora_minutos
+
+    await mensagem.channel.send(
+        f'O horário do alerta de checkpoint foi definido para {hora_minutos_str}.'
+    )
+
+
+async def alerta_dm_horario(mensagem, conector_discord):
+    """
+    Define o horário do alerta de checkpoint na dm.
+
+    Parâmetros:
+        mensagem (discord.Message): A mensagem que contém o horário a ser definido.
+        conector_discord (ConectorDiscord): O objeto que representa a conexão com o Discord.
+    """
+    # Extrai a hora e os minutos da mensagem
+    partes_mensagem = mensagem.content.split(' ', 1)
+
+    # Verifica se a mensagem tem duas partes
+    if len(partes_mensagem) < 2:
+        await mensagem.channel.send(
+            'Por favor, forneça um horário no formato HH:MM.'
+        )
+        return
+
+    hora_minutos_str = partes_mensagem[1]
+    # Converte a hora e os minutos em um objeto datetime.time
+    try:
+        hora_minutos = datetime.strptime(hora_minutos_str, '%H:%M').time()
+    except ValueError:
+        await mensagem.channel.send(
+            'Por favor, forneça um horário válido. Exemplo: /horacheckpoint 12:30'
+        )
+        return
+    # Define o horário do alerta
+    conector_discord.verificar_checkpoint_horario = hora_minutos
+
+    await mensagem.channel.send(
+        f'O horário do alerta de checkpoint na dm foi definido para {hora_minutos_str}.'
+    )
+
+
 async def offavisodm(mensagem, conector_discord):
     """
     Desativa o envio de avisos por DM.
@@ -129,18 +196,6 @@ async def idignore(mensagem, conector_discord):
         await mensagem.channel.send(
             'Por favor, forneça pelo menos um ID para ignorar. Exemplo: /idignore 11111111111111111'
         )
-
-
-# TODO: parece a mesma função, mas não é pois essa adiciona um ID por vez e a de cima adiciona vários IDs de uma vez
-# async def idignore(mensagem, conector_discord):
-#     partes = mensagem.content.split()
-#     if len(partes) >= 2:
-#         id_usuario = int(partes[1])
-#         conector_discord.ids_ignorados.add(id_usuario)
-#         await mensagem.channel.send(f"O usuário com ID {id_usuario} foi adicionado à lista de IDs ignorados.")
-#     else:
-#         await mensagem.channel.send("Por favor, forneça um ID de usuário. Exemplo: /idignore 11111111111111111")
-
 
 async def readicionarids(mensagem, conector_discord):
     """
