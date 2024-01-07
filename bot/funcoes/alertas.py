@@ -4,7 +4,6 @@ import datetime
 import discord
 
 
-
 def is_time_to_check_alerta_checkpoint(conector_discord):
     """
     Verifica se é hora de verificar o alerta do checkpoint.
@@ -93,7 +92,6 @@ async def verificar_checkpoints_nao_enviados(
         )
 
         await asyncio.sleep(60)  # para evitar mensagens repetidas
-
 
 
 def is_time_to_check(conector_discord):

@@ -197,6 +197,7 @@ async def idignore(mensagem, conector_discord):
             'Por favor, forneça pelo menos um ID para ignorar. Exemplo: /idignore 11111111111111111'
         )
 
+
 async def readicionarids(mensagem, conector_discord):
     """
     Função que readiciona IDs para a função verificar checkpoint não enviados.

@@ -1,41 +1,9 @@
 import discord
-from funcoes.comandos import processa_mensagens_anteriores
+from discord import app_commands
 
+cliente_discord = discord.Client(intents=discord.Intents.all())
+tree = app_commands.CommandTree(cliente_discord)
 
-async def on_ready(
-    cliente_discord,
-    conector_discord,
-    dados,
-    alerta_checkpoint,
-    verificar_checkpoints_nao_enviados,
-):
-    """
-    Função assíncrona que é chamada quando o bot está pronto para ser usado.
-    Realiza a impressão de uma mensagem informando que o bot está conectado ao Discord.
-    Em seguida, chama as funções para processar mensagens anteriores, alertar checkpoints e verificar checkpoints não enviados.
-
-    Parâmetros:
-    - cliente_discord: objeto cliente do Discord
-    - conector_discord: objeto conector do Discord
-    - dados: dados necessários para o processamento das mensagens
-    - alerta_checkpoint: função para alertar sobre checkpoints
-    - verificar_checkpoints_nao_enviados: função para verificar checkpoints não enviados
-
-    processa_mensagens_anteriores: função para processar mensagens anteriores do canal de checkpoint
-    """
-    print(f'{cliente_discord.user} conectado ao Discord!')
-
-    await processa_mensagens_anteriores(conector_discord, cliente_discord)
-
-    cliente_discord.loop.create_task(
-        alerta_checkpoint(cliente_discord, conector_discord)
-    )
-
-    cliente_discord.loop.create_task(
-        verificar_checkpoints_nao_enviados(
-            cliente_discord, conector_discord, dados
-        )
-    )
 
 
 async def on_message(
