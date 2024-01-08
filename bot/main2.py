@@ -54,7 +54,8 @@ async def comousar(interaction: discord.Interaction):
 @tree.command(name='horario_alerta', description='Define o horário do alerta')
 async def definir_alerta(interaction: discord.Interaction, horario: str):
     horario = datetime.strptime(horario, "%H:%M").time()
-    await interaction.response.send_message(f'Alerta definido para {cliente_discord.alerta_checkpoint_horario}.')
+    cliente_discord.alerta_checkpoint_horario = horario
+    await interaction.response.send_message(f'Alerta definido para {cliente_discord.alerta_checkpoint_horario}.',ephemeral=True)
 
 @tree.command(name='offeveryone', description='Desativa menções a todos')
 async def offeveryone(interaction: discord.Interaction):
