@@ -14,7 +14,7 @@ def is_time_to_check_alerta_checkpoint(conector_discord):
     horario_alerta = conector_discord.alerta_checkpoint_horario
     if horario_alerta is None:
         return False
-
+    
     agora = datetime.datetime.now()
 
     return (
@@ -32,12 +32,14 @@ async def alerta_checkpoint(cliente_discord, conector_discord):
     - cliente_discord: o cliente do Discord.
     - conector_discord: o conector do Discord.
     """
+    # print("entrei aqui")
     await cliente_discord.wait_until_ready()
     while not cliente_discord.is_closed():
         if is_time_to_check_alerta_checkpoint(conector_discord):
             canal = cliente_discord.get_channel(
                 conector_discord.canal_checkpoint_id
             )
+            # print(f"Canal obtido: {canal}")
             if canal is not None:
                 if (
                     conector_discord.enviar_everyone

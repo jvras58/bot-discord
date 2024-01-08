@@ -1,4 +1,5 @@
-import time
+from datetime import datetime, time
+
 
 import discord
 from config.conector_discord import ConectorDiscord
@@ -49,13 +50,14 @@ async def comousar(interaction: discord.Interaction):
 
 
 # ------------------- Comandos de enviar everyone no canal INICIO ------------------- #
-#TODO: NECESSARIO TESTAR
+#TODO: NECESSARIO TESTAR (aparentimente esta conseguindo funcionar corretamente)
 @tree.command(name='horario_alerta', description='Define o horário do alerta')
 async def definir_alerta(interaction: discord.Interaction, horario: str):
     # Responda à interação primeiro
     await interaction.response.send_message(
         'Definindo alerta...', ephemeral=True
     )
+    horario = datetime.strptime(horario, "%H:%M").time()
     cliente_discord.alerta_checkpoint_horario = horario
     dm_channel = await interaction.user.create_dm()
     await dm_channel.send(f'Alerta definido para {cliente_discord.alerta_checkpoint_horario}.')
@@ -99,6 +101,7 @@ async def alerta_dm_horario(interaction: discord.Interaction, horario: str):
     await interaction.response.send_message(
         'Horario do alerta no horário sendo definido...', ephemeral=True
     )
+    horario = datetime.strptime(horario, "%H:%M").time()
     cliente_discord.verificar_checkpoint_horario = horario
     dm_channel = await interaction.user.create_dm()
     await dm_channel.send(f'Alerta definido para {cliente_discord.verificar_checkpoint_horario}.')
@@ -161,7 +164,8 @@ async def readicionarids(interaction: discord.Interaction, id: str):
 
 # ------------------- Comandos de configurações de canais INICIO ------------------- #
 
-#TODO: NECESSARIO TESTAR (importante)
+#TODO: NECESSARIO TESTAR (importante) [ele esta conseguindo definir esse id para a variavel mas não esta sendo reconhecido por ngm que usa o id de canal]
+# TODO: TESTE 1 FORÇAR O ID DO CANAL DE CHECKPOINT SEM PRECISAR USAR ESSE COMANDO SE PEGAR SABEMOS QUE ELE É O PROBLEMA
 @tree.command(name='idcheckpoint', description='Define o ID do canal de checkpoint')
 async def idcheckpoint(interaction: discord.Interaction, id: str):
     # Responda à interação primeiro
@@ -169,6 +173,8 @@ async def idcheckpoint(interaction: discord.Interaction, id: str):
         'Definindo ID do canal de checkpoint...', ephemeral=True
     )
     cliente_discord.canal_checkpoint_id = id 
+    #print(f"ID do canal enviado definido para {id}.")
+    #print(f"ID do canal de checkpoint definido para {cliente_discord.canal_checkpoint_id}.")
     dm_channel = await interaction.user.create_dm()
     await dm_channel.send(f'ID do canal de checkpoint definido para {cliente_discord.canal_checkpoint_id}.')
 
