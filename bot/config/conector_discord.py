@@ -9,7 +9,6 @@ from funcoes.alertas import (
 from funcoes.comandos import processa_mensagens_anteriores
 from funcoes.dados import dados
 
-
 class ConectorDiscord(discord.Client):
     """
     Classe responsável por conectar ao Discord e gerenciar as configurações do bot.
@@ -45,8 +44,10 @@ class ConectorDiscord(discord.Client):
         - verificar_checkpoints_nao_enviados(cliente_discord = self, conector_discord= self, dados= self.dados): função para verificar checkpoints não enviados
         """
         await self.wait_until_ready()
-        await self.tree.sync()
-        self.synced = True
+        if not self.synced:
+            # como não tem o guild_id, os comandos sempre demoram de 1~24 hrs para sincronizar
+            await self.tree.sync()
+            self.synced = True
         print(f'{self.user} conectado ao Discord!')
 
         await processa_mensagens_anteriores(self, self)
