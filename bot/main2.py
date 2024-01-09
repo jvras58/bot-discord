@@ -112,6 +112,7 @@ async def onavisodm(interaction: discord.Interaction):
 
 
 #TODO: NECESSARIO TESTAR
+# discord.User é um objeto que representa um usuário do Discord então na vez de passar diretamente um parametro id eu posso passar um objeto discord.User
 @tree.command(name='idignore', description='Adiciona um ID de usuário à lista de ignorados')
 async def idignore(interaction: discord.Interaction, id: str):
     cliente_discord.ids_ignorados = int(id)
@@ -139,20 +140,32 @@ async def readicionarids(interaction: discord.Interaction, id: str):
 
 # ------------------- Comandos de configurações de canais INICIO ------------------- #
 
-#FIXME: RECEBENDO O ID PELO COMANDO O PARAMETRO TEM QUE SER UM STR PARA SER TRANSFORMADO EM INT DEPOIS MESMO O canal_checkpoint_id sendo str averiguar depois o motivo....
 @tree.command(name='idcheckpoint', description='Define o ID do canal de checkpoint')
-async def idcheckpoint(interaction: discord.Interaction, id: str):
-    cliente_discord.canal_checkpoint_id = int(id)
-    # print(f"ID do canal enviado definido para {id}.")
+async def idcheckpoint(interaction: discord.Interaction, canal:discord.TextChannel):
+    cliente_discord.canal_checkpoint_id = canal.id
+    # print(f"ID do canal enviado definido para {canal}.")
     # print(f"ID do canal de checkpoint definido para {cliente_discord.canal_checkpoint_id}.")
-    await interaction.response.send_message(f'ID do canal de checkpoint definido para {cliente_discord.canal_checkpoint_id}.')
+    await interaction.response.send_message(f'ID do canal de checkpoint definido para {canal}.')
 
 
 @tree.command(name='idplanilha', description='Define o ID do canal da planilha')
-async def idplanilha(interaction: discord.Interaction, id: str):
-    cliente_discord.canal_planilha_id = int(id)
-    await interaction.response.send_message(f'ID do canal da planilha definido para {cliente_discord.canal_planilha_id}.')
+async def idplanilha(interaction: discord.Interaction, canal:discord.TextChannel):
+    cliente_discord.canal_planilha_id = canal.id
+    await interaction.response.send_message(f'ID do canal da planilha definido para {canal}.')
 # ------------------- Comandos de configurações de canais FIM ------------------- #
+
+@tree.command(name='dm', description='Envia o dm pelo bot')
+async def dm(interaction: discord.Interaction, user: discord.User, *, mensagem: str):
+    try:
+        if user:
+            dm_channel = await user.create_dm()
+            await dm_channel.send(mensagem)
+            await interaction.response.send_message(f'Mensagem enviada para o usuário {user.name}.')
+        else:
+            await interaction.response.send_message('Não foi possível encontrar o usuário mencionado.')
+    except discord.errors.HTTPException:
+        await interaction.response.send_message('Não foi possível enviar a mensagem para o usuário mencionado.')
+
 
 
 while True:
@@ -162,58 +175,3 @@ while True:
     except Exception as e:
         print(f'Erro: {e}. Reiniciando o bot.')
         time.sleep(5)  # Pausa por 5s
-
-
-
-
-
-
-
-
-
-
-
-
-# ------------------- Comandos em fase de ajustes INICIO ------------------- #
-'''
-@tree.command(name='dm', description='Envia uma mensagem direta para o usuário')
-async def dm(interaction: discord.Interaction):
-    await interaction.response.send_message(
-        'Enviando mensagem direta...', ephemeral=True
-    )
-    if 'options' in interaction.data and len(interaction.data['options']) > 0:
-        partes = interaction.data['options'][0]['value'].split()
-        if len(partes) >= 2:
-            id_usuario = int(partes[0])
-            texto = ' '.join(partes[1:])
-            usuario = interaction.client.get_user(id_usuario)
-            if usuario:
-                dm_channel = await usuario.create_dm()
-                await dm_channel.send(texto)
-                await interaction.followup.send(
-                    f'Mensagem enviada para o usuário com ID {id_usuario}.'
-                )
-            else:
-                await interaction.followup.send(
-                    f'Não foi possível encontrar o usuário com ID {id_usuario}.'
-                )
-        else:
-            await interaction.followup.send(
-                'Por favor, forneça um ID de usuário e uma mensagem. Exemplo: /dm 11111111111111111 Olá!'
-            )
-    else:
-        await interaction.followup.send(
-            'Por favor, forneça um ID de usuário e uma mensagem. Exemplo: /dm 11111111111111111 Olá!'
-        )
-
-@tree.command(name='dm1', description='Envia o dm pelo bot')
-async def dm1(ctx, id_usuario: int, *, mensagem: str):
-    usuario = cliente_discord.get_user(id_usuario)
-    if usuario:
-        dm_channel = await usuario.create_dm()
-        await dm_channel.send(mensagem)
-        await ctx.send(f'Mensagem enviada para o usuário com ID {id_usuario}.')
-    else:
-        await ctx.send(f'Não foi possível encontrar o usuário com ID {id_usuario}.')
-'''       
-# ------------------- Comandos em fase de ajustes FIM ------------------- #

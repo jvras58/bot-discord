@@ -49,9 +49,9 @@ class ConectorDiscord(discord.Client):
             await self.tree.sync()
             self.synced = True
         print(f'{self.user} conectado ao Discord!')
-
+        #TODO: funcionando!!
         await processa_mensagens_anteriores(self, self)
-
+        #TODO: funcionando!!
         self.loop.create_task(alerta_checkpoint(self, self))
-
+        #FIXME: testar!!
         self.loop.create_task(verificar_checkpoints_nao_enviados(self, self, self.dados))
