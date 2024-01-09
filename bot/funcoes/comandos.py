@@ -97,6 +97,8 @@ async def processa_mensagens_anteriores(conector_discord, cliente_discord):
         conector_discord: O conector do Discord.
         cliente_discord: O cliente do Discord.
     """
+
+    #FIXME : SE EU DEBUGAR COM O LEGADO.Py ele consegue receber o id do canal de checkpoint mas se eu debugar com o main.py ele não consegue
     while conector_discord.canal_checkpoint_id is None:
         await asyncio.sleep(
             1

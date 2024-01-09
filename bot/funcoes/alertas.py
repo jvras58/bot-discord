@@ -32,14 +32,14 @@ async def alerta_checkpoint(cliente_discord, conector_discord):
     - cliente_discord: o cliente do Discord.
     - conector_discord: o conector do Discord.
     """
-    # print("entrei aqui")
+    print("entrei aqui")
     await cliente_discord.wait_until_ready()
     while not cliente_discord.is_closed():
         if is_time_to_check_alerta_checkpoint(conector_discord):
             canal = cliente_discord.get_channel(
                 conector_discord.canal_checkpoint_id
             )
-            # print(f"Canal obtido: {canal}")
+            print(f"Canal obtido: {canal}")
             if canal is not None:
                 if (
                     conector_discord.enviar_everyone
@@ -70,7 +70,7 @@ async def verificar_checkpoints_nao_enviados(
         canal_alvo = cliente_discord.get_channel(
             conector_discord.canal_checkpoint_id
         )
-        # print(f'Canal alvo: {canal_alvo}')
+        print(f'Canal alvo: {canal_alvo}')
 
         if not is_time_to_check(conector_discord):
             await asyncio.sleep(1)
@@ -80,7 +80,7 @@ async def verificar_checkpoints_nao_enviados(
             await asyncio.sleep(60)
             continue
 
-        # print('O canal alvo existe')
+        print('O canal alvo existe')
         usuarios_enviaram = dados['id_usuario'].tolist()
         # print('IDs dos usuários que já enviaram o checkpoint:', usuarios_enviaram)
 
