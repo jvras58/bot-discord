@@ -33,7 +33,7 @@ cliente_discord.tree.command(name='dm', description='Envia o dm pelo bot')(dm)
 cliente_discord.tree.command(name='idcheckpoint', description='Define o ID do canal de checkpoint')(idcheckpoint)
 cliente_discord.tree.command(name='idplanilha', description='Define o ID do canal da planilha')(idplanilha)
 
-
+# TODO: ALGO ESTA COMPROMETENDO O FUNCIONAMENTO DO PROCESSAMENTO DO CHECKPOINT ANTERIORES E DO ALERTA DE CHECKPOINT legado.py tem uma versão funcional 
 while True:
     try:
         # Inicialização do cliente do Discord

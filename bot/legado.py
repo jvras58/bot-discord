@@ -1,0 +1,177 @@
+from datetime import datetime, time
+import time
+
+
+import discord
+from config.conector_discord import ConectorDiscord
+from config.config import get_settings
+
+
+cliente_discord = ConectorDiscord()
+tree = cliente_discord.tree
+
+
+
+# ------------------- Comandos basicos INICIO ------------------- #
+@tree.command(name='status', description='Envia o status do bot na dm')
+async def status(interaction: discord.Interaction):
+    # Responda à interação primeiro
+    """
+    send_message tem um parâmetro ephemeral que, quando definido como True, faz com que a mensagem seja visível apenas para o usuário que iniciou a interação
+    """
+    await interaction.response.send_message(
+        'Enviando status na DM...', ephemeral=True
+    )
+    dm_channel = await interaction.user.create_dm()
+    await dm_channel.send(f'Status é {cliente_discord.status}')
+
+
+@tree.command(name='linkbot', description='Envia o link do bot na dm')
+async def linkbot(interaction: discord.Interaction):
+    # Responda à interação primeiro
+    await interaction.response.send_message(
+        'Enviando link do bot na DM...', ephemeral=True
+    )
+    link = 'https://discord.com/api/oauth2/authorize?client_id={}&permissions=8&scope=bot'.format(
+        interaction.client.user.id
+    )
+    dm_channel = await interaction.user.create_dm()
+    await dm_channel.send(link)
+
+@tree.command(name='comousar', description='Envia instruções de como usar o bot')
+async def comousar(interaction: discord.Interaction):
+    # Responda à interação primeiro
+    await interaction.response.send_message(
+        'Enviando como usar na DM...', ephemeral=True
+    )
+    dm_channel = await interaction.user.create_dm()
+    with open('comomeusar.md', 'rb') as file:
+        await dm_channel.send(file=discord.File(file, 'comousar.md'))
+# ------------------- Comandos basicos FIM ------------------- #
+
+
+# ------------------- Comandos de enviar everyone no canal INICIO ------------------- #
+@tree.command(name='horario_alerta', description='Define o horário do alerta')
+async def definir_alerta(interaction: discord.Interaction, horario: str):
+    horario = datetime.strptime(horario, "%H:%M").time()
+    cliente_discord.alerta_checkpoint_horario = horario
+    await interaction.response.send_message(f'Alerta definido para {cliente_discord.alerta_checkpoint_horario}.',ephemeral=True)
+
+@tree.command(name='offeveryone', description='Desativa menções a todos')
+async def offeveryone(interaction: discord.Interaction):
+    # Responda à interação primeiro
+    await interaction.response.send_message(
+        'Desativando menções a todos...', ephemeral=True
+    )
+    cliente_discord.enviar_everyone = False
+
+@tree.command(name='oneveryone', description='Ativa menções a todos')
+async def oneveryone(interaction: discord.Interaction):
+    # Responda à interação primeiro
+    await interaction.response.send_message(
+        'Ativando menções a todos...', ephemeral=True
+    )
+    cliente_discord.enviar_everyone = True
+
+# ------------------- Comandos de enviar everyone no canal FIM ------------------- #
+
+
+
+
+
+
+
+
+
+
+
+# ------------------- Comandos de enviar dm no canal INICIO ------------------- #
+
+@tree.command(name='horario_verificar', description='Define o horário do verficar checkpoint')
+async def alerta_dm_horario(interaction: discord.Interaction, horario: str):
+    horario = datetime.strptime(horario, "%H:%M").time()
+    cliente_discord.verificar_checkpoint_horario = horario
+    await interaction.response.send_message(f'Alerta definido para {cliente_discord.verificar_checkpoint_horario}.')
+    
+@tree.command(name='offavisodm', description='Desativa aviso de mensagem direta')
+async def offavisodm(interaction: discord.Interaction):
+    # Responda à interação primeiro
+    await interaction.response.send_message(
+        'Desativando aviso de mensagem direta...', ephemeral=True
+    )
+    cliente_discord.enviar_dm = False
+
+
+@tree.command(name='onavisodm', description='Ativa aviso de mensagem direta')
+async def onavisodm(interaction: discord.Interaction):
+    # Responda à interação primeiro
+    await interaction.response.send_message(
+        'Ativando aviso de mensagem direta...', ephemeral=True
+    )
+    cliente_discord.enviar_dm = True
+
+
+#TODO: NECESSARIO TESTAR
+# discord.User é um objeto que representa um usuário do Discord então na vez de passar diretamente um parametro id eu posso passar um objeto discord.User
+@tree.command(name='idignore', description='Adiciona um ID de usuário à lista de ignorados')
+async def idignore(interaction: discord.Interaction, id: str):
+    cliente_discord.ids_ignorados = int(id)
+    await interaction.response.send_message(f'ID de usuário {cliente_discord.ids_ignorados} adicionado à lista de ignorados.')
+
+#TODO: NECESSARIO TESTAR
+@tree.command(name='readicionarids', description='Remove um ID de usuário da lista de ignorados')
+async def readicionarids(interaction: discord.Interaction, id: str):
+    cliente_discord.ids_ignorados.remove(int(id))
+    await interaction.response.send_message(f'ID de usuário {id} removido da lista de ignorados.')
+# ------------------- Comandos de enviar dm no canal FIM ------------------- #
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ------------------- Comandos de configurações de canais INICIO ------------------- #
+
+@tree.command(name='idcheckpoint', description='Define o ID do canal de checkpoint')
+async def idcheckpoint(interaction: discord.Interaction, canal:discord.TextChannel):
+    cliente_discord.canal_checkpoint_id = canal.id
+    # print(f"ID do canal enviado definido para {canal}.")
+    # print(f"ID do canal de checkpoint definido para {cliente_discord.canal_checkpoint_id}.")
+    await interaction.response.send_message(f'ID do canal de checkpoint definido para {canal}.')
+
+
+@tree.command(name='idplanilha', description='Define o ID do canal da planilha')
+async def idplanilha(interaction: discord.Interaction, canal:discord.TextChannel):
+    cliente_discord.canal_planilha_id = canal.id
+    await interaction.response.send_message(f'ID do canal da planilha definido para {canal}.')
+# ------------------- Comandos de configurações de canais FIM ------------------- #
+
+@tree.command(name='dm', description='Envia o dm pelo bot')
+async def dm(interaction: discord.Interaction, user: discord.User, *, mensagem: str):
+    try:
+        if user:
+            dm_channel = await user.create_dm()
+            await dm_channel.send(mensagem)
+            await interaction.response.send_message(f'Mensagem enviada para o usuário {user.name}.')
+        else:
+            await interaction.response.send_message('Não foi possível encontrar o usuário mencionado.')
+    except discord.errors.HTTPException:
+        await interaction.response.send_message('Não foi possível enviar a mensagem para o usuário mencionado.')
+
+
+
+while True:
+    try:
+        # Inicialização do cliente do Discord
+        cliente_discord.run(get_settings().DISCORD_TOKEN)
+    except Exception as e:
+        print(f'Erro: {e}. Reiniciando o bot.')
+        time.sleep(5)  # Pausa por 5s

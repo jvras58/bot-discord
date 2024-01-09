@@ -7,7 +7,7 @@ from funcoes.alertas import (
     verificar_checkpoints_nao_enviados,
 )
 from funcoes.comandos import processa_mensagens_anteriores #,processa_mensagem_canal_alvo
-from funcoes.dados import dados
+from funcoes.dados import dados #, envia_planilha
 
 class ConectorDiscord(discord.Client):
     """
@@ -62,4 +62,12 @@ class ConectorDiscord(discord.Client):
     #     Evento chamado quando uma mensagem é enviada.
     #     """
     #     await self.wait_until_ready()
-    #     await self.tree.process_message(mensagem)
+
+    #     # TODO: ESSA É A MAGICA QUE FAZ A LEITURA DAS MENSAGENS NO CANAL DO CHECKPOINT ELE COMEÇA A LER APARTIR QUE RECEBE O ID DO CANAL E ENVIA A PLANILHA NO CANAL DA PLANILHA QUANDO RECEBE O /CHECKPOINT
+    #     if mensagem.channel.id == self.canal_checkpoint_id:
+    #         await processa_mensagem_canal_alvo(mensagem)
+    #     if (
+    #         mensagem.channel.id == self.canal_planilha_id
+    #         and mensagem.content.strip() == '/planilha'
+    #     ):
+    #         await envia_planilha(mensagem)
