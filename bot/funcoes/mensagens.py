@@ -100,7 +100,7 @@ async def on_message(
                 else:
                     await funcao(mensagem, conector_discord)
             break
-
+    # ESSA É A MAGICA QUE FAZ A LEITURA DAS MENSAGENS NO CANAL DO CHECKPOINT ELE COMEÇA A LER APARTIR QUE RECEBE O ID DO CANAL E ENVIA A PLANILHA NO CANAL DA PLANILHA QUANDO RECEBE O /CHECKPOINT
     if mensagem.channel.id == conector_discord.canal_checkpoint_id:
         await processa_mensagem_canal_alvo(mensagem)
     if (
