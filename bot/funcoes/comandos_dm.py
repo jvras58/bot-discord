@@ -1,5 +1,4 @@
-from datetime import datetime, time
-import time
+from datetime import datetime
 
 
 import discord
@@ -112,3 +111,13 @@ async def dm(interaction: discord.Interaction, user: discord.User, *, mensagem: 
             await interaction.response.send_message('Não foi possível encontrar o usuário mencionado.')
     except discord.errors.HTTPException:
         await interaction.response.send_message('Não foi possível enviar a mensagem para o usuário mencionado.')
+
+def load_dm_commands(tree):
+    tree.command(name='horario_verificar', description='Define o horário do verficar checkpoint')(alerta_dm_horario)
+    tree.command(name='offavisodm', description='Desativa aviso de mensagem direta')(offavisodm)
+    tree.command(name='onavisodm', description='Ativa aviso de mensagem direta')(onavisodm)
+    #TODO: NECESSARIO TESTAR
+    tree.command(name='idignore', description='Adiciona um ID de usuário à lista de ignorados')(idignore)
+    #TODO: NECESSARIO TESTAR
+    tree.command(name='readicionarids', description='Remove um ID de usuário da lista de ignorados')(readicionarids)
+    tree.command(name='dm', description='Envia o dm pelo bot')(dm)

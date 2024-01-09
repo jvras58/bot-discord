@@ -65,3 +65,8 @@ async def oneveryone(interaction: discord.Interaction):
     dm_channel = await interaction.user.create_dm()
     await dm_channel.send('Ativado menções a todos.')
 '''
+
+def load_mentions_commands(tree):
+    tree.command(name='horario_alerta', description='Define o horário do alerta')(definir_alerta)
+    tree.command(name='offeveryone', description='Desativa menções a todos')(offeveryone)
+    tree.command(name='oneveryone', description='Ativa menções a todos')(oneveryone)
