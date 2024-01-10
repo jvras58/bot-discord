@@ -2,7 +2,7 @@ from datetime import datetime
 
 
 import discord
-
+import re
 
 
 class DmCommands:
@@ -37,8 +37,11 @@ class DmCommands:
         self.cliente_discord.ids_ignorados.remove(int(id))
         await interaction.response.send_message(f'ID de usuário {id} removido da lista de ignorados.')
 
-    async def dm(interaction: discord.Interaction, user: discord.User, *, mensagem: str):
+    async def dm(self, interaction: discord.Interaction, user_mention: str, *, mensagem: str):
         try:
+            # Extrai o ID do usuário da menção (gambiarra que funciona....)
+            user_id = re.findall(r'\d+', user_mention)[0]
+            user = await self.cliente_discord.fetch_user(user_id)
             if user:
                 dm_channel = await user.create_dm()
                 await dm_channel.send(mensagem)
@@ -47,6 +50,18 @@ class DmCommands:
                 await interaction.response.send_message('Não foi possível encontrar o usuário mencionado.')
         except discord.errors.HTTPException:
             await interaction.response.send_message('Não foi possível enviar a mensagem para o usuário mencionado.')
+
+    #FIXME: O COMANDO DM ABAIXO FUNCIONA DIRETAMENTE NA MAIN MAS POR ALGUM MOTIVO AQUI NA CLASSE NÃO FUNCIONA....
+    # async def dm(interaction: discord.Interaction, user: discord.User, *, mensagem: str):
+    #     try:
+    #         if user:
+    #             dm_channel = await user.create_dm()
+    #             await dm_channel.send(mensagem)
+    #             await interaction.response.send_message(f'Mensagem enviada para o usuário {user.name}.')
+    #         else:
+    #             await interaction.response.send_message('Não foi possível encontrar o usuário mencionado.')
+    #     except discord.errors.HTTPException:
+    #         await interaction.response.send_message('Não foi possível enviar a mensagem para o usuário mencionado.')
 
     def load_dm_commands(self, tree):
         tree.command(name='horario_verificar', description='Define o horário do verficar checkpoint')(self.alerta_dm_horario)

@@ -1,4 +1,5 @@
 import time
+import discord
 from config.conector_discord import ConectorDiscord
 from config.config import get_settings
 from funcoes.comandos_basicos import BasicCommands
@@ -24,6 +25,7 @@ dm_commands.load_dm_commands(tree)
 
 canal_commands = CanalCommands(cliente_discord)
 canal_commands.load_channel_commands(tree)
+
 
 while True:
     try:
