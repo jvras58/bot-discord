@@ -1,7 +1,7 @@
 import time
 from config.conector_discord import ConectorDiscord
 from config.config import get_settings
-from funcoes.comandos_basicos import load_basic_commands
+from funcoes.comandos_basicos import BasicCommands
 from funcoes.comandos_mencoes import MentionsCommands
 from funcoes.comandos_dm import DmCommands
 from funcoes.comandos_config_canal import CanalCommands
@@ -9,8 +9,8 @@ from funcoes.comandos_config_canal import CanalCommands
 cliente_discord = ConectorDiscord()
 tree = cliente_discord.tree
 
-
-load_basic_commands(tree)
+BasicCommands = BasicCommands(cliente_discord)
+BasicCommands.load_basic_commands(tree)
 
 
 MentionsCommands = MentionsCommands(cliente_discord)
