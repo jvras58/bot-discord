@@ -1,4 +1,5 @@
 from unittest.mock import AsyncMock, MagicMock
+
 import pytest
 
 from config.conector_discord import ConectorDiscord
@@ -17,13 +18,16 @@ def cliente_discord():
 def basic_commands(cliente_discord):
     return BasicCommands(cliente_discord)
 
+
 @pytest.fixture
 def mentions_commands(cliente_discord):
     return MentionsCommands(cliente_discord)
 
+
 @pytest.fixture
 def dm_commands(cliente_discord):
     return DmCommands(cliente_discord)
+
 
 @pytest.fixture
 def canal_commands(cliente_discord):
@@ -36,6 +40,7 @@ def interaction():
     interaction.response.send_message = AsyncMock()
     interaction.user.create_dm = AsyncMock()
     return interaction
+
 
 @pytest.fixture
 def interaction_channel():
