@@ -53,7 +53,7 @@ class ConectorDiscord(discord.Client):
         await processa_mensagens_anteriores(self, self)
 
         self.loop.create_task(alerta_checkpoint(self, self))
-        #FIXME: testar!!
+
         self.loop.create_task(verificar_checkpoints_nao_enviados(self, self, self.dados))
     
     async def on_message(self, mensagem):
@@ -63,15 +63,7 @@ class ConectorDiscord(discord.Client):
         await self.wait_until_ready()
         if mensagem.author == self.user:
             return
-        #TODO: ele esta conseguindo processar os checkpoints 'novos' e os 'antigos' mas não estou conseguindo receber as planilhas ainda de acordo com segundo if
-        # print(f"mensagem.channel.id: {mensagem.channel.id}")
-        # print(f"canal_checkpoint_id: {self.canal_checkpoint_id}")
         if mensagem.channel.id == self.canal_checkpoint_id:
-            # print('channel id continua o mesmo do checkpoint: ',mensagem.channel.id)
-            # print("processa_mensagem_canal_alvo está sendo chamado")
             await processa_mensagem_canal_alvo(mensagem)
-
-        # print(f"mensagem.channel.id do canal da planilha: {mensagem.channel.id}")
-        if mensagem.channel.id == self.canal_planilha_id and mensagem.content.strip() == '/checkpoint':
-            # print('channel id continua o mesmo do da planilha: ',mensagem.channel.id)
+        if mensagem.channel.id == self.canal_planilha_id and mensagem.content.strip() == '@checkpoint':
             await envia_planilha(mensagem)
