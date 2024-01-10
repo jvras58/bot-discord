@@ -19,7 +19,7 @@ class ConectorDiscord(discord.Client):
     _instance = None
     
     def __init__(self):
-        super().__init__(intents=discord.Intents.default())
+        super().__init__(intents=discord.Intents.all())
         self.synced = False
         self.tree = app_commands.CommandTree(self)
         self.enviar_everyone: bool = True
@@ -49,25 +49,29 @@ class ConectorDiscord(discord.Client):
             await self.tree.sync()
             self.synced = True
         print(f'{self.user} conectado ao Discord!')
-        #TODO: funcionando!!
+
         await processa_mensagens_anteriores(self, self)
-        #TODO: funcionando!!
+
         self.loop.create_task(alerta_checkpoint(self, self))
         #FIXME: testar!!
         self.loop.create_task(verificar_checkpoints_nao_enviados(self, self, self.dados))
     
-    #TODO: Analisar como fazer essa parte principal de ler os checkpoints no canal como é feito no codigo anterior
-    # async def on_message(self, mensagem):
-    #     """
-    #     Evento chamado quando uma mensagem é enviada.
-    #     """
-    #     await self.wait_until_ready()
+    async def on_message(self, mensagem):
 
-    #     # TODO: ESSA É A MAGICA QUE FAZ A LEITURA DAS MENSAGENS NO CANAL DO CHECKPOINT ELE COMEÇA A LER APARTIR QUE RECEBE O ID DO CANAL E ENVIA A PLANILHA NO CANAL DA PLANILHA QUANDO RECEBE O /CHECKPOINT
-    #     if mensagem.channel.id == self.canal_checkpoint_id:
-    #         await processa_mensagem_canal_alvo(mensagem)
-    #     if (
-    #         mensagem.channel.id == self.canal_planilha_id
-    #         and mensagem.content.strip() == '/planilha'
-    #     ):
-    #         await envia_planilha(mensagem)
+        # print(f"Mensagem recebida de {mensagem.author}: {mensagem.content}")
+
+        await self.wait_until_ready()
+        if mensagem.author == self.user:
+            return
+        #TODO: ele esta conseguindo processar os checkpoints 'novos' e os 'antigos' mas não estou conseguindo receber as planilhas ainda de acordo com segundo if
+        # print(f"mensagem.channel.id: {mensagem.channel.id}")
+        # print(f"canal_checkpoint_id: {self.canal_checkpoint_id}")
+        if mensagem.channel.id == self.canal_checkpoint_id:
+            # print('channel id continua o mesmo do checkpoint: ',mensagem.channel.id)
+            # print("processa_mensagem_canal_alvo está sendo chamado")
+            await processa_mensagem_canal_alvo(mensagem)
+
+        # print(f"mensagem.channel.id do canal da planilha: {mensagem.channel.id}")
+        if mensagem.channel.id == self.canal_planilha_id and mensagem.content.strip() == '/checkpoint':
+            # print('channel id continua o mesmo do da planilha: ',mensagem.channel.id)
+            await envia_planilha(mensagem)
