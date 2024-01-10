@@ -1,3 +1,4 @@
+from unittest import mock
 from unittest.mock import AsyncMock, MagicMock, mock_open, patch
 
 
@@ -52,12 +53,11 @@ async def test_comousar(basic_commands, interaction):
         )
         interaction.user.create_dm.assert_called_once()
         mock_file.assert_any_call('comomeusar.md', 'rb')
-        #TODO: Não consigo fazer ele encontrar o arquivo comomeusar.md
-        # dm_channel = await interaction.user.create_dm()
-        # dm_channel.send.assert_called_once_with(
-        #     file=discord.File(mock_file.return_value, 'comousar.md')
-        # )
-
+        dm_channel = await interaction.user.create_dm()
+        #TODO: discord.File NÃO É O MESMO QUE EU ESTARIA TESTANDO AQUI NO TEST ENTÃO UMA MANEIRA DE CONTORNAR ISSO É O MOCK.ANY QUE PASSA A VERIFICAÇÃO PARA QUALQUER VALOR..
+        dm_channel.send.assert_called_once_with(
+            file=mock.ANY
+        )
 
 def test_load_basic_commands(basic_commands):
     tree = MagicMock()
