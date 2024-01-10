@@ -14,7 +14,7 @@ def is_time_to_check_alerta_checkpoint(conector_discord):
     horario_alerta = conector_discord.alerta_checkpoint_horario
     if horario_alerta is None:
         return False
-    
+
     agora = datetime.datetime.now()
 
     return (

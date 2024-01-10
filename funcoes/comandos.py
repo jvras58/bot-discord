@@ -1,5 +1,7 @@
 import asyncio
+
 import emoji
+
 from funcoes.dados import dados, dados_anteriores, salvar_dados
 
 

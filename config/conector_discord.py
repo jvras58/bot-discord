@@ -1,13 +1,18 @@
 from datetime import datetime
-from discord import app_commands
+
 import discord
+from discord import app_commands
 
 from funcoes.alertas import (
     alerta_checkpoint,
     verificar_checkpoints_nao_enviados,
 )
-from funcoes.comandos import processa_mensagens_anteriores, processa_mensagem_canal_alvo
+from funcoes.comandos import (
+    processa_mensagem_canal_alvo,
+    processa_mensagens_anteriores,
+)
 from funcoes.dados import dados, envia_planilha
+
 
 class ConectorDiscord(discord.Client):
     """
@@ -17,7 +22,7 @@ class ConectorDiscord(discord.Client):
     """
 
     _instance = None
-    
+
     def __init__(self):
         super().__init__(intents=discord.Intents.all())
         self.synced = False
@@ -54,8 +59,10 @@ class ConectorDiscord(discord.Client):
 
         self.loop.create_task(alerta_checkpoint(self, self))
 
-        self.loop.create_task(verificar_checkpoints_nao_enviados(self, self, self.dados))
-    
+        self.loop.create_task(
+            verificar_checkpoints_nao_enviados(self, self, self.dados)
+        )
+
     async def on_message(self, mensagem):
 
         # print(f"Mensagem recebida de {mensagem.author}: {mensagem.content}")
@@ -65,5 +72,8 @@ class ConectorDiscord(discord.Client):
             return
         if mensagem.channel.id == self.canal_checkpoint_id:
             await processa_mensagem_canal_alvo(mensagem)
-        if mensagem.channel.id == self.canal_planilha_id and mensagem.content.strip() == '@checkpoint':
+        if (
+            mensagem.channel.id == self.canal_planilha_id
+            and mensagem.content.strip() == '@checkpoint'
+        ):
             await envia_planilha(mensagem)

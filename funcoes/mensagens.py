@@ -6,6 +6,7 @@ from funcoes.comandos import processa_mensagens_anteriores
 cliente_discord = discord.Client(intents=discord.Intents.all())
 tree = app_commands.CommandTree(cliente_discord)
 
+
 async def on_ready(
     cliente_discord,
     conector_discord,
@@ -40,6 +41,7 @@ async def on_ready(
             cliente_discord, conector_discord, dados
         )
     )
+
 
 async def on_message(
     mensagem,
