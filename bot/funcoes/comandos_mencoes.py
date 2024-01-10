@@ -7,66 +7,31 @@ from config.conector_discord import ConectorDiscord
 
 
 
-cliente_discord = ConectorDiscord()
 
+class MentionsCommands:
+    def __init__(self, cliente):
+        self.cliente_discord = cliente
 
-async def definir_alerta(interaction: discord.Interaction, horario: str):
-    horario = datetime.strptime(horario, "%H:%M").time()
-    cliente_discord.alerta_checkpoint_horario = horario
-    await interaction.response.send_message(f'Alerta definido para {cliente_discord.alerta_checkpoint_horario}.',ephemeral=True)
+    async def definir_alerta(self, interaction: discord.Interaction, horario: str):
+        horario = datetime.strptime(horario, "%H:%M").time()
+        self.cliente_discord.alerta_checkpoint_horario = horario
+        await interaction.response.send_message(f'Alerta definido para {self.cliente_discord.alerta_checkpoint_horario}.',ephemeral=True)
 
-# versão que envia na dm as respostas
-'''
-async def definir_alerta(interaction: discord.Interaction, horario: str):
-    # Responda à interação primeiro
-    await interaction.response.send_message(
-        'Definindo alerta...', ephemeral=True
-    )
-    horario = datetime.strptime(horario, "%H:%M").time()
-    cliente_discord.alerta_checkpoint_horario = horario
-    dm_channel = await interaction.user.create_dm()
-    await dm_channel.send(f'Alerta definido para {cliente_discord.alerta_checkpoint_horario}.')
-'''
+    async def offeveryone(self, interaction: discord.Interaction):
+        # Responda à interação primeiro
+        await interaction.response.send_message(
+            'Desativando menções a todos...', ephemeral=True
+        )
+        self.cliente_discord.enviar_everyone = False
 
-async def offeveryone(interaction: discord.Interaction):
-    # Responda à interação primeiro
-    await interaction.response.send_message(
-        'Desativando menções a todos...', ephemeral=True
-    )
-    cliente_discord.enviar_everyone = False
+    async def oneveryone(self, interaction: discord.Interaction):
+        # Responda à interação primeiro
+        await interaction.response.send_message(
+            'Ativando menções a todos...', ephemeral=True
+        )
+        self.cliente_discord.enviar_everyone = True
 
-# versão que envia na dm as respostas
-'''
-async def offeveryone(interaction: discord.Interaction):
-    # Responda à interação primeiro
-    await interaction.response.send_message(
-        'Desativando menções a todos...', ephemeral=True
-    )
-    cliente_discord.enviar_everyone = False
-    dm_channel = await interaction.user.create_dm()
-    await dm_channel.send('Desativado menções a todos.')
-'''
-
-async def oneveryone(interaction: discord.Interaction):
-    # Responda à interação primeiro
-    await interaction.response.send_message(
-        'Ativando menções a todos...', ephemeral=True
-    )
-    cliente_discord.enviar_everyone = True
-
-# versão que envia na dm as respostas
-'''
-async def oneveryone(interaction: discord.Interaction):
-    # Responda à interação primeiro
-    await interaction.response.send_message(
-        'Ativando menções a todos...', ephemeral=True
-    )
-    cliente_discord.enviar_everyone = True
-    dm_channel = await interaction.user.create_dm()
-    await dm_channel.send('Ativado menções a todos.')
-'''
-
-def load_mentions_commands(tree):
-    tree.command(name='horario_alerta', description='Define o horário do alerta')(definir_alerta)
-    tree.command(name='offeveryone', description='Desativa menções a todos')(offeveryone)
-    tree.command(name='oneveryone', description='Ativa menções a todos')(oneveryone)
+    def load_mentions_commands(self, tree):
+        tree.command(name='horario_alerta', description='Define o horário do alerta')(self.definir_alerta)
+        tree.command(name='offeveryone', description='Desativa menções a todos')(self.offeveryone)
+        tree.command(name='oneveryone', description='Ativa menções a todos')(self.oneveryone)

@@ -6,8 +6,8 @@ from funcoes.alertas import (
     alerta_checkpoint,
     verificar_checkpoints_nao_enviados,
 )
-from funcoes.comandos import processa_mensagens_anteriores #,processa_mensagem_canal_alvo
-from funcoes.dados import dados #, envia_planilha
+from funcoes.comandos import processa_mensagens_anteriores, processa_mensagem_canal_alvo
+from funcoes.dados import dados, envia_planilha
 
 class ConectorDiscord(discord.Client):
     """
