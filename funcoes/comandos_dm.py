@@ -1,12 +1,13 @@
 from datetime import datetime
 
 import discord
-
+from discord import app_commands
 
 class DmCommands:
     def __init__(self, cliente):
         self.cliente_discord = cliente
-
+    
+    @app_commands.describe(horario = 'Horário do alerta: %H:%M')
     async def alerta_dm_horario(
         self, interaction: discord.Interaction, horario: str
     ):
@@ -29,20 +30,21 @@ class DmCommands:
         self.cliente_discord.enviar_dm = True
 
     # TODO: discord.User é um objeto que representa um usuário do Discord então na vez de passar diretamente um parametro id eu posso passar um objeto discord.User
-    # TODO: NECESSARIO TESTAR
+    @app_commands.describe(id = 'identificador do usuário a ser ignorado')
     async def idignore(self, interaction: discord.Interaction, id: str):
         self.cliente_discord.ids_ignorados = int(id)
         await interaction.response.send_message(
             f'ID de usuário {self.cliente_discord.ids_ignorados} adicionado à lista de ignorados.'
         )
 
-    # TODO: NECESSARIO TESTAR
+    @app_commands.describe(id = 'identificador do usuário a ser ree-adicionado')
     async def readicionarids(self, interaction: discord.Interaction, id: str):
         self.cliente_discord.ids_ignorados.remove(int(id))
         await interaction.response.send_message(
             f'ID de usuário {id} removido da lista de ignorados.'
         )
 
+    @app_commands.describe(user = 'usuario a ser enviado a mensagem', mensagem = 'mensagem a ser enviada')
     async def dm(
         self,
         interaction: discord.Interaction,
@@ -77,12 +79,10 @@ class DmCommands:
         tree.command(
             name='onavisodm', description='Ativa aviso de mensagem direta'
         )(self.onavisodm)
-        # TODO: NECESSARIO TESTAR
         tree.command(
             name='idignore',
             description='Adiciona um ID de usuário à lista de ignorados',
         )(self.idignore)
-        # TODO: NECESSARIO TESTAR
         tree.command(
             name='readicionarids',
             description='Remove um ID de usuário da lista de ignorados',

@@ -1,12 +1,13 @@
 from datetime import datetime
 
 import discord
-
+from discord import app_commands
 
 class MentionsCommands:
     def __init__(self, cliente):
         self.cliente_discord = cliente
 
+    @app_commands.describe(horario = 'Horário do alerta: %H:%M')
     async def definir_alerta(
         self, interaction: discord.Interaction, horario: str
     ):
