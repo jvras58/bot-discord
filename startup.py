@@ -8,8 +8,12 @@ from funcoes.comandos_dm import DmCommands
 from funcoes.comandos_extras import ExtrasCommands
 from funcoes.comandos_mencoes import MentionsCommands
 
+
+#TODO: problema de ordem de chamada de função task format foi desabilitado
+
 cliente_discord = ConectorDiscord()
 tree = cliente_discord.tree
+
 
 BasicCommands = BasicCommands(cliente_discord)
 BasicCommands.load_basic_commands(tree)

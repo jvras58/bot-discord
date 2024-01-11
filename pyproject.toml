@@ -52,7 +52,8 @@ extend-exclude = '(migrations/)'
 
 [tool.taskipy.tasks]
 lint = 'ruff . && blue --check . --diff'
-format = 'blue .  && isort .'
+#FIXME: format acaba quebrando o código no startup.py 
+# format = 'blue .  && isort .'
 run = 'python bot/main.py'
 pre_test = 'task lint'
 test = 'pytest -s -x --cov=fast_zero -vv'
