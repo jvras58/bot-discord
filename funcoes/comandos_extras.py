@@ -1,4 +1,6 @@
 import random
+from collections import defaultdict
+
 import discord
 from discord import app_commands
 
@@ -9,7 +11,6 @@ class ExtrasCommands:
     def __init__(self, cliente):
         self.cliente_discord = cliente
 
-    
     @app_commands.describe(
         usuario1='Primeiro usuário a shippar',
         usuario2='Segundo usuário a shippar',
@@ -32,9 +33,7 @@ class ExtrasCommands:
                 '😅 Não parece rolar uma química tão grande, mas quem sabe...?'
             )
         elif porcentagem <= 65:
-            mensagem_extra = (
-                '☺️ Essa combinação tem potencial, que tal um jantar romântico?'
-            )
+            mensagem_extra = '☺️ Essa combinação tem potencial, que tal um jantar romântico?'
         else:
             mensagem_extra = '😍 Combinação perfeita! Quando será o casamento?'
 
@@ -42,9 +41,36 @@ class ExtrasCommands:
             f':hot_face: **Será que vamos ter um casal novo por aqui?** :hot_face: \n {self.cliente_discord.user}: {usuario1.mention} + {usuario2.mention} = ✨ `{nomeship}` ✨\n{mensagem_extra}',
             file=discord.File(fp=buffer, filename='file.png'),
         )
-    
+
+    async def ranking(self, interaction: discord.Interaction):
+        # Extrai o canal do checkpoint
+        canal_alvo = self.cliente_discord.get_channel(self.cliente_discord.canal_checkpoint_id)
+        
+        # Cria um dicionário para armazenar o número de checkpoints enviados por cada usuário
+        ranking = defaultdict(int)
+
+        # Itera sobre as mensagens no canal
+        async for mensagem in canal_alvo.history(limit=50000):
+            # Verifica se a mensagem foi enviada pelo próprio bot
+            if mensagem.author == self.cliente_discord.user:
+                continue
+
+            # Incrementa o contador para o usuário que enviou a mensagem
+            ranking[mensagem.author.id] += 1
+
+        # Classifica o dicionário pelo número de checkpoints enviados
+        ranking_ordenado = sorted(ranking.items(), key=lambda item: item[1], reverse=True)
+
+        # Envia o ranking no chat
+        for i, (id_usuario, num_checkpoints) in enumerate(ranking_ordenado, 1):
+            await interaction.response.send_message(f'{i}. <@{id_usuario}>: {num_checkpoints} checkpoints')
+
     def load_extras_commands(self, tree):
         tree.command(
             name='ship',
             description='Cheque se alguém é sua alma gêmea',
         )(self.ship)
+        tree.command(
+            name='ranking',
+            description='Mostra o ranking de usuários que mais enviaram checkpoints',
+        )(self.ranking)

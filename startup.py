@@ -5,8 +5,8 @@ from config.config import get_settings
 from funcoes.comandos_basicos import BasicCommands
 from funcoes.comandos_config_canal import CanalCommands
 from funcoes.comandos_dm import DmCommands
-from funcoes.comandos_mencoes import MentionsCommands
 from funcoes.comandos_extras import ExtrasCommands
+from funcoes.comandos_mencoes import MentionsCommands
 
 cliente_discord = ConectorDiscord()
 tree = cliente_discord.tree
@@ -28,7 +28,6 @@ canal_commands.load_channel_commands(tree)
 
 Extras_Commands = ExtrasCommands(cliente_discord)
 Extras_Commands.load_extras_commands(tree)
-
 
 
 while True:
