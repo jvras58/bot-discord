@@ -1,10 +1,4 @@
-
-import random
 import time
-
-import discord
-from discord import app_commands
-
 
 from config.conector_discord import ConectorDiscord
 from config.config import get_settings
