@@ -1,4 +1,10 @@
+
+import random
 import time
+
+import discord
+from discord import app_commands
+
 
 from config.conector_discord import ConectorDiscord
 from config.config import get_settings
@@ -6,6 +12,7 @@ from funcoes.comandos_basicos import BasicCommands
 from funcoes.comandos_config_canal import CanalCommands
 from funcoes.comandos_dm import DmCommands
 from funcoes.comandos_mencoes import MentionsCommands
+from funcoes.comandos_extras import ExtrasCommands
 
 cliente_discord = ConectorDiscord()
 tree = cliente_discord.tree
@@ -24,6 +31,10 @@ dm_commands.load_dm_commands(tree)
 
 canal_commands = CanalCommands(cliente_discord)
 canal_commands.load_channel_commands(tree)
+
+Extras_Commands = ExtrasCommands(cliente_discord)
+Extras_Commands.load_extras_commands(tree)
+
 
 
 while True:

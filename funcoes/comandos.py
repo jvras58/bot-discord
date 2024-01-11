@@ -1,7 +1,11 @@
 import asyncio
+import io
 
+import discord
 import emoji
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 
+from config.config import get_settings
 from funcoes.dados import dados, dados_anteriores, salvar_dados
 
 
@@ -115,7 +119,7 @@ async def processa_mensagens_anteriores(conector_discord, cliente_discord):
         return
     # FIXME: CUIDADO COM O LIMIT DE MENSAGENS ANTERIORES ESTA DEFINIDO PARA 2500
     mensagens_anteriores = canal_alvo.history(
-        limit=2500
+        limit=50000
     )  # Obtem as últimas 100 mensagens do canal
     async for mensagem in mensagens_anteriores:
         linhas = mensagem.content.split('\n')
@@ -189,3 +193,47 @@ async def processa_mensagens_anteriores(conector_discord, cliente_discord):
                     'Data de Envio'
                 ].astype(str)
                 salvar_dados(dados_anteriores, 'checkpoint_anteriores.xlsx')
+
+
+async def create_image(
+    usuario1: discord.User, usuario2: discord.User, porcentagem: int
+):
+    imagem1 = await usuario1.avatar.read()
+    avatar1 = Image.open(io.BytesIO(imagem1)).resize(
+        get_settings().AVATAR_SIZE
+    )
+
+    imagem2 = await usuario2.avatar.read()
+    avatar2 = Image.open(io.BytesIO(imagem2)).resize(
+        get_settings().AVATAR_SIZE
+    )
+
+    planodefundo = Image.new(
+        'RGB', get_settings().BACKGROUND_SIZE, get_settings().BACKGROUND_COLOR
+    )
+    planodefundo.paste(avatar1, (0, 0))
+    planodefundo.paste(avatar2, (get_settings().AVATAR_SIZE[0], 0))
+
+    fundodraw = ImageDraw.Draw(planodefundo)
+    fundodraw.rounded_rectangle(
+        (
+            (0, get_settings().AVATAR_SIZE[1]),
+            (
+                get_settings().BACKGROUND_SIZE[0] * (porcentagem / 100),
+                get_settings().BACKGROUND_SIZE[1] + 9,
+            ),
+        ),
+        fill=get_settings().RECTANGLE_COLOR,
+        radius=get_settings().RECTANGLE_RADIUS,
+    )
+
+    fonte = ImageFont.truetype('RobotoMono-Bold.ttf', get_settings().FONT_SIZE)
+    fundodraw.text(
+        (230, get_settings().AVATAR_SIZE[1]), f'{porcentagem}%', font=fonte
+    )
+
+    buffer = io.BytesIO()
+    planodefundo.save(buffer, format='PNG')
+    buffer.seek(0)
+
+    return buffer

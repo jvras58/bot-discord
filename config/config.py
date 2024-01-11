@@ -12,6 +12,13 @@ class Settings(BaseSettings):
 
     DISCORD_TOKEN: str
 
+    AVATAR_SIZE: tuple = (250, 250)
+    BACKGROUND_SIZE: tuple = (500, 280)
+    BACKGROUND_COLOR: tuple = (56, 56, 56)
+    RECTANGLE_COLOR:tuple = (207, 13, 48)
+    RECTANGLE_RADIUS: int = 5
+    FONT_SIZE: int = 20
+
 
 @lru_cache
 def get_settings() -> Settings:

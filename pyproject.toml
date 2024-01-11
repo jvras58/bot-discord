@@ -21,6 +21,7 @@ pynput = "^1.7.6"
 pydantic = "^2.5.2"
 pydantic-settings = "^2.1.0"
 discord-py-interactions = "^5.11.0"
+pillow = "^10.2.0"
 
 
 

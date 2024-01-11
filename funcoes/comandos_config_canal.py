@@ -1,11 +1,12 @@
 import discord
 from discord import app_commands
 
+
 class CanalCommands:
     def __init__(self, cliente):
         self.cliente_discord = cliente
 
-    @app_commands.describe(canal = 'Canal de checkpoint')
+    @app_commands.describe(canal='Canal de checkpoint')
     async def canalcheckpoint(
         self, interaction: discord.Interaction, canal: discord.TextChannel
     ):
@@ -15,8 +16,8 @@ class CanalCommands:
         await interaction.response.send_message(
             f'ID do canal de checkpoint definido para {canal}.'
         )
-    
-    @app_commands.describe(canal = 'Canal de checkpoint')
+
+    @app_commands.describe(canal='Canal de checkpoint')
     async def canalplanilha(
         self, interaction: discord.Interaction, canal: discord.TextChannel
     ):
@@ -27,9 +28,10 @@ class CanalCommands:
 
     def load_channel_commands(self, tree):
         tree.command(
-            name='idcheckpoint',
+            name='canalcheckpoint',
             description='Define o ID do canal de checkpoint',
         )(self.canalcheckpoint)
         tree.command(
-            name='idplanilha', description='Define o ID do canal da planilha'
+            name='canalplanilha',
+            description='Define o ID do canal da planilha',
         )(self.canalplanilha)
