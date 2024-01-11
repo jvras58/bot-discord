@@ -80,9 +80,9 @@ async def verificar_checkpoints_nao_enviados(
             await asyncio.sleep(60)
             continue
 
-        print('O canal alvo existe')
+        # print('O canal alvo existe')
         usuarios_enviaram = dados['id_usuario'].tolist()
-        print('IDs dos usuários que já enviaram o checkpoint:', usuarios_enviaram)
+        # print('IDs dos usuários que já enviaram o checkpoint:', usuarios_enviaram)
 
         membros = canal_alvo.guild.members
         membros_para_alertar = filter_members(
