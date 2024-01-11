@@ -1,6 +1,7 @@
 import discord
 
 from config.conector_discord import ConectorDiscord
+from funcoes.comandos import create_image
 
 
 class BasicCommands:
@@ -13,23 +14,25 @@ class BasicCommands:
         )
 
     async def linkbot(self, interaction: discord.Interaction):
-        await interaction.response.send_message(
-            'Link Enviado...', ephemeral=True
-        )
+        bot_user = interaction.client.user
+        imagem_buffer = await create_image(bot_user)
+
         link = 'https://discord.com/api/oauth2/authorize?client_id={}&permissions=8&scope=bot'.format(
-            interaction.client.user.id
+            bot_user.id
         )
+
+        file = discord.File(imagem_buffer, filename="image.png")
 
         embed = discord.Embed(
-            title='Link de Autorização do Bot',
-            description='Clique no link abaixo para adicionar o bot ao seu servidor!',
-            color=discord.Color.blue(),
+            title='Adicione-me ao seu servidor!',
+            description=f'Clique no link: {link}',
+            color=discord.Color.blue()
         )
+        embed.set_thumbnail(url="attachment://image.png")
 
-        embed.add_field(name='Link', value=link, inline=False)
+        await interaction.response.send_message(embed=embed, file=file, ephemeral=True)
 
-        dm_channel = await interaction.user.create_dm()
-        await dm_channel.send(embed=embed)
+
 
     async def comousar(self, interaction: discord.Interaction):
         await interaction.response.send_message(
