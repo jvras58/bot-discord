@@ -12,8 +12,10 @@ class MentionsCommands:
     async def definir_alerta(
         self, interaction: discord.Interaction, horario: str
     ):
+        #print(f'Conector Discord antes de definir alerta_checkpoint_horario: {id(self.cliente_discord)}')
         horario = datetime.strptime(horario, '%H:%M').time()
         self.cliente_discord.alerta_checkpoint_horario = horario
+        print(f'Horário do alerta depois de definir: {self.cliente_discord.alerta_checkpoint_horario}')
         await interaction.response.send_message(
             f'Alerta definido para {self.cliente_discord.alerta_checkpoint_horario}.',
             ephemeral=True,

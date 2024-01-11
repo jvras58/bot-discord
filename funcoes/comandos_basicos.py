@@ -25,7 +25,7 @@ class BasicCommands:
 
         embed = discord.Embed(
             title='Adicione-me ao seu servidor!',
-            description=f'Clique no link: {link}',
+            description=f'Para adicionar-me ao seu servidor, clique [aqui]:{link}',
             color=discord.Color.blue()
         )
         embed.set_thumbnail(url="attachment://image.png")

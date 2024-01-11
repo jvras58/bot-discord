@@ -11,8 +11,13 @@ def is_time_to_check_alerta_checkpoint(conector_discord):
     Retorna True se for um dia útil (segunda a sexta-feira), no horário definido pelo comando definir_alerta.
     Caso contrário, retorna False.
     """
+    print(f'Horário do alerta dentro da função: {conector_discord.alerta_checkpoint_horario}')
+    #print(f'Conector Discord dentro da função: {id(conector_discord)}')
     horario_alerta = conector_discord.alerta_checkpoint_horario
+    #algo esta acontencendo mas o horario_alerta esta vindo o horario certo definido pelo alerta_checkpoint_horario
+    # print(f'Horário do alerta: {horario_alerta}')
     if horario_alerta is None:
+        #print('Horário do alerta é None')
         return False
 
     agora = datetime.datetime.now()
@@ -32,14 +37,16 @@ async def alerta_checkpoint(cliente_discord, conector_discord):
     - cliente_discord: o cliente do Discord.
     - conector_discord: o conector do Discord.
     """
-    # print("entrei aqui")
+    print("entrei aqui")
     await cliente_discord.wait_until_ready()
     while not cliente_discord.is_closed():
+        #FIXME:ALGO HAVER COM O IS_TIME_TO_CHECK NÃO ESTA QUERENDO VIRAR TRUE MESMO BATENDO O TIME....
+        # print(f"ESTOU AQUI {is_time_to_check_alerta_checkpoint(conector_discord)}, {conector_discord.alerta_checkpoint_horario}")
         if is_time_to_check_alerta_checkpoint(conector_discord):
             canal = cliente_discord.get_channel(
                 conector_discord.canal_checkpoint_id
             )
-            # print(f"Canal obtido: {canal}")
+            
             if canal is not None:
                 if (
                     conector_discord.enviar_everyone
@@ -53,7 +60,7 @@ async def alerta_checkpoint(cliente_discord, conector_discord):
         else:
             await asyncio.sleep(1)
 
-
+# NÃO ESTA PEGANDO? PROVAVELMENTE E PQ DADOS SÃO SEMPRE VAZIOS OU COISA DO TIPO
 async def verificar_checkpoints_nao_enviados(
     cliente_discord, conector_discord, dados
 ):
@@ -70,6 +77,7 @@ async def verificar_checkpoints_nao_enviados(
         canal_alvo = cliente_discord.get_channel(
             conector_discord.canal_checkpoint_id
         )
+        #TODO: PELO PRINT ESTA RECEBENDO O CANAL ALVO CORRETAMENTE, MAS NÃO ESTA ENTRANDO NO IF PQ? ACHO QUE É ALGO HAVER COM O IS_TIME_TO_CHECK
         # print(f'Canal alvo: {canal_alvo}')
 
         if not is_time_to_check(conector_discord):
@@ -80,9 +88,9 @@ async def verificar_checkpoints_nao_enviados(
             await asyncio.sleep(60)
             continue
 
-        # print('O canal alvo existe')
+        print('O canal alvo existe')
         usuarios_enviaram = dados['id_usuario'].tolist()
-        # print('IDs dos usuários que já enviaram o checkpoint:', usuarios_enviaram)
+        print('IDs dos usuários que já enviaram o checkpoint:', usuarios_enviaram)
 
         membros = canal_alvo.guild.members
         membros_para_alertar = filter_members(
