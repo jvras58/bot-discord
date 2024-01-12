@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import discord
 from discord import app_commands
 
@@ -13,6 +11,9 @@ from funcoes.comandos import (
 )
 from funcoes.dados import dados, envia_planilha
 
+from sqlalchemy.orm import Session
+from database.bot_models import Bot
+from database.session import engine
 
 class ConectorDiscord(discord.Client):
     """
@@ -27,46 +28,59 @@ class ConectorDiscord(discord.Client):
         super().__init__(intents=discord.Intents.all())
         self.synced = False
         self.tree = app_commands.CommandTree(self)
-        self.enviar_everyone: bool = True
-        self.enviar_dm: bool = True
-        self.ids_ignorados: list[str] = []
-        self.canal_checkpoint_id: str = None
-        self.canal_planilha_id: str = None
-        self.alerta_checkpoint_horario: datetime = None
-        self.verificar_checkpoint_horario: datetime = None
+        self.session = Session(bind=engine)
+        bot = self.session.query(Bot).first()
+        if bot:
+            self.enviar_everyone = bot.enviar_everyone
+            self.enviar_dm = bot.enviar_dm
+            self.ids_ignorados = bot.ids_ignorados
+            self.canal_checkpoint_id = bot.canal_checkpoint_id
+            self.canal_planilha_id = bot.canal_planilha_id
+            self.alerta_checkpoint_horario = bot.alerta_checkpoint_horario
+            self.verificar_checkpoint_horario = bot.verificar_checkpoint_horario
+        else:
+            self.enviar_everyone = None
+            self.enviar_dm = None
+            self.ids_ignorados = None
+            self.canal_checkpoint_id = None
+            self.canal_planilha_id = None
+            self.alerta_checkpoint_horario = None
+            self.verificar_checkpoint_horario = None
         self.dados = dados
         self.alerta_checkpoint = alerta_checkpoint
         self.verificar_checkpoints_nao_enviados = (
             verificar_checkpoints_nao_enviados
         )
 
-    # TODO: self é a própria instância de ConectorDiscord por isso (conector_discord, cliente_discord) se passa como (self)
     async def on_ready(self):
         """
         Evento chamado quando o bot está pronto para ser usado.
-        - processa_mensagens_anteriores(conector_discord= self, cliente_discord= self): função para processar mensagens anteriores do canal de checkpoint
-        - alerta_checkpoint(conector_discord= self, cliente_discord= self): função para alertar sobre checkpoints
-        - verificar_checkpoints_nao_enviados(cliente_discord = self, conector_discord= self, dados= self.dados): função para verificar checkpoints não enviados
         """
         await self.wait_until_ready()
         if not self.synced:
-            # como não tem o guild_id, os comandos sempre demoram de 1~24 hrs para sincronizar
             await self.tree.sync()
             self.synced = True
         print(f'{self.user} conectado ao Discord!')
+        
+        bot = self.session.query(Bot).first()
+        if bot:
+            bot.enviar_everyone = self.enviar_everyone
+            bot.enviar_dm = self.enviar_dm
+            bot.ids_ignorados = self.ids_ignorados
+            bot.canal_checkpoint_id = self.canal_checkpoint_id
+            bot.canal_planilha_id = self.canal_planilha_id
+            bot.alerta_checkpoint_horario = self.alerta_checkpoint_horario
+            bot.verificar_checkpoint_horario = self.verificar_checkpoint_horario
+            self.session.commit()
 
         await processa_mensagens_anteriores(self, self)
 
         self.loop.create_task(alerta_checkpoint(self, self))
-        #TODO: VC NÃO ESTA PEGANDO PQ?
         self.loop.create_task(
             verificar_checkpoints_nao_enviados(self, self, self.dados)
         )
 
     async def on_message(self, mensagem):
-
-        # print(f"Mensagem recebida de {mensagem.author}: {mensagem.content}")
-
         await self.wait_until_ready()
         if mensagem.author == self.user:
             return
