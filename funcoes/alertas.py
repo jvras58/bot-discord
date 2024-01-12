@@ -32,7 +32,7 @@ async def alerta_checkpoint(cliente_discord, conector_discord):
     - cliente_discord: o cliente do Discord.
     - conector_discord: o conector do Discord.
     """
-    print("entrei aqui")
+    # print("entrei aqui")
     await cliente_discord.wait_until_ready()
     while not cliente_discord.is_closed():
         

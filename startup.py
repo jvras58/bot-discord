@@ -15,12 +15,12 @@ cliente_discord = ConectorDiscord()
 tree = cliente_discord.tree
 
 
-BasicCommands = BasicCommands(cliente_discord)
-BasicCommands.load_basic_commands(tree)
+Basic_Commands = BasicCommands(cliente_discord)
+Basic_Commands.load_basic_commands(tree)
 
 
-MentionsCommands = MentionsCommands(cliente_discord)
-MentionsCommands.load_mentions_commands(tree)
+Mentions_Commands = MentionsCommands(cliente_discord)
+Mentions_Commands.load_mentions_commands(tree)
 
 
 dm_commands = DmCommands(cliente_discord)
