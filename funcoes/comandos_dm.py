@@ -13,7 +13,15 @@ class DmCommands:
         self, interaction: discord.Interaction, horario: str
     ):
         horario = datetime.strptime(horario, '%H:%M').time()
-        self.cliente_discord.verificar_checkpoint_horario = horario
+        
+        # Crie um objeto datetime.datetime com a data atual
+        datetime_obj = datetime.now()
+
+        # Substitua a hora, minuto e segundo do objeto datetime.datetime
+        datetime_obj = datetime_obj.replace(hour=horario.hour, minute=horario.minute, second=horario.second)
+
+        self.cliente_discord.verificar_checkpoint_horario = datetime_obj
+        self.cliente_discord.save()
         await interaction.response.send_message(
             f'Alerta definido para {self.cliente_discord.verificar_checkpoint_horario}.'
         )

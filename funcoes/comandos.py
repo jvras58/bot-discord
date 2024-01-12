@@ -109,7 +109,7 @@ async def processa_mensagens_anteriores(conector_discord, cliente_discord):
             1
         )  # aguarda 1 segundo antes de verificar novamente
 
-    canal_alvo = cliente_discord.get_channel(
+    canal_alvo = await cliente_discord.fetch_channel(
         conector_discord.canal_checkpoint_id
     )
     if canal_alvo is None:

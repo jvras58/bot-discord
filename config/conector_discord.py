@@ -39,6 +39,7 @@ class ConectorDiscord(discord.Client):
             self.alerta_checkpoint_horario = bot.alerta_checkpoint_horario
             self.verificar_checkpoint_horario = bot.verificar_checkpoint_horario
         else:
+            #TODO: ESSE DEVE SER O MOTIVO DOS AVISOS NÃO ESTAREM SENDO ENVIADOS POIS SÃO NONE NA VEZ DE TRUE POR PADRÃO AVERIGUAR DEPOIS...
             self.enviar_everyone = None
             self.enviar_dm = None
             self.ids_ignorados = None
@@ -51,6 +52,27 @@ class ConectorDiscord(discord.Client):
         self.verificar_checkpoints_nao_enviados = (
             verificar_checkpoints_nao_enviados
         )
+
+
+    def save(self):
+        bot = self.session.query(Bot).first()
+
+        if not bot:
+            bot = Bot()
+            self.session.add(bot)
+
+        bot.enviar_everyone = self.enviar_everyone
+        bot.enviar_dm = self.enviar_dm
+        #TODO: IDs ignorados SÃO UMA LISTA, NÃO UMA STRING MAS POR ENQUANTO VAMOS DEIXAR ASSIM!
+        bot.ids_ignorados = self.ids_ignorados
+        #bot.ids_ignorados = ','.join(str(id) for id in self.ids_ignorados)
+        bot.canal_checkpoint_id = self.canal_checkpoint_id
+        bot.canal_planilha_id = self.canal_planilha_id
+        bot.alerta_checkpoint_horario = self.alerta_checkpoint_horario
+        bot.verificar_checkpoint_horario = self.verificar_checkpoint_horario
+
+        self.session.commit()
+        self.session.close()
 
     async def on_ready(self):
         """
