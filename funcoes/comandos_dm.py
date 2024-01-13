@@ -31,17 +31,20 @@ class DmCommands:
             'Desativando aviso de mensagem direta...', ephemeral=True
         )
         self.cliente_discord.enviar_dm = False
+        self.cliente_discord.save()
 
     async def onavisodm(self, interaction: discord.Interaction):
         await interaction.response.send_message(
             'Ativando aviso de mensagem direta...', ephemeral=True
         )
         self.cliente_discord.enviar_dm = True
+        self.cliente_discord.save()
 
     # TODO: discord.User é um objeto que representa um usuário do Discord então na vez de passar diretamente um parametro id eu posso passar um objeto discord.User
     @app_commands.describe(id='identificador do usuário a ser ignorado')
     async def idignore(self, interaction: discord.Interaction, id: str):
         self.cliente_discord.ids_ignorados = int(id)
+        self.cliente_discord.save()
         await interaction.response.send_message(
             f'ID de usuário {self.cliente_discord.ids_ignorados} adicionado à lista de ignorados.'
         )
@@ -49,6 +52,7 @@ class DmCommands:
     @app_commands.describe(id='identificador do usuário a ser ree-adicionado')
     async def readicionarids(self, interaction: discord.Interaction, id: str):
         self.cliente_discord.ids_ignorados.remove(int(id))
+        self.cliente_discord.save()
         await interaction.response.send_message(
             f'ID de usuário {id} removido da lista de ignorados.'
         )

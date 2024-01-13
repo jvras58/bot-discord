@@ -39,12 +39,14 @@ class ConectorDiscord(discord.Client):
             self.alerta_checkpoint_horario = bot.alerta_checkpoint_horario
             self.verificar_checkpoint_horario = bot.verificar_checkpoint_horario
         else:
-            #TODO: ESSE DEVE SER O MOTIVO DOS AVISOS NÃO ESTAREM SENDO ENVIADOS POIS SÃO NONE NA VEZ DE TRUE POR PADRÃO AVERIGUAR DEPOIS...
-            self.enviar_everyone = None
-            self.enviar_dm = None
+            self.enviar_everyone: bool = True
+            self.enviar_dm: bool = True
+            #TODO: LEMBRAR QUE ISSO AQUI É UMA LISTA OU SEJA DEVERIA SER ALGO ASSIM: self.ids_ignorados: list = [] 
             self.ids_ignorados = None
+            #TODO: POR ALGUM MOTIVO SO FUNCIONA SE FOR DEFINIDO PELO COMANDO PRIMEIRO CASO EU ESPERE QUE ELE OBTENHA O ID DA PLANILHA ELE NÃO CONSEGUE MAS TBM NÃO ACUSA O ERRO NO PRINT DO VERIFICAR CANAL ALGO NA FUNÇÃO DE verificar_checkpoints_nao_enviados
             self.canal_checkpoint_id = None
             self.canal_planilha_id = None
+            
             self.alerta_checkpoint_horario = None
             self.verificar_checkpoint_horario = None
         self.dados = dados

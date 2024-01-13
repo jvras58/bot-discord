@@ -34,6 +34,7 @@ class MentionsCommands:
             'Desativando menções a todos...', ephemeral=True
         )
         self.cliente_discord.enviar_everyone = False
+        self.cliente_discord.save()
 
     async def oneveryone(self, interaction: discord.Interaction):
         # Responda à interação primeiro
@@ -41,6 +42,7 @@ class MentionsCommands:
             'Ativando menções a todos...', ephemeral=True
         )
         self.cliente_discord.enviar_everyone = True
+        self.cliente_discord.save()
 
     def load_mentions_commands(self, tree):
         tree.command(

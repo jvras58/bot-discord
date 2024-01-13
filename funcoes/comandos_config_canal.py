@@ -11,6 +11,7 @@ class CanalCommands:
         self, interaction: discord.Interaction, canal: discord.TextChannel
     ):
         self.cliente_discord.canal_checkpoint_id = canal.id
+        self.cliente_discord.save()
         # print(f"ID do canal enviado definido para {canal}.")
         # print(f"ID do canal de checkpoint definido para {self.cliente_discord.canal_checkpoint_id}.")
         await interaction.response.send_message(
@@ -22,6 +23,7 @@ class CanalCommands:
         self, interaction: discord.Interaction, canal: discord.TextChannel
     ):
         self.cliente_discord.canal_planilha_id = canal.id
+        self.cliente_discord.save()
         await interaction.response.send_message(
             f'ID do canal da planilha definido para {canal}.'
         )

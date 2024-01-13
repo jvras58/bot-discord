@@ -3,7 +3,7 @@ import io
 
 import discord
 import emoji
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL import Image, ImageDraw, ImageFont
 
 from config.config import get_settings
 from funcoes.dados import dados, dados_anteriores, salvar_dados
