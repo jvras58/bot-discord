@@ -12,8 +12,6 @@ class CanalCommands:
     ):
         self.cliente_discord.canal_checkpoint_id = canal.id
         self.cliente_discord.save()
-        # print(f"ID do canal enviado definido para {canal}.")
-        # print(f"ID do canal de checkpoint definido para {self.cliente_discord.canal_checkpoint_id}.")
         await interaction.response.send_message(
             f'ID do canal de checkpoint definido para {canal}.'
         )

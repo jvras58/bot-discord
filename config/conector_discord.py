@@ -43,10 +43,9 @@ class ConectorDiscord(discord.Client):
             self.enviar_dm: bool = True
             #TODO: LEMBRAR QUE ISSO AQUI É UMA LISTA OU SEJA DEVERIA SER ALGO ASSIM: self.ids_ignorados: list = [] 
             self.ids_ignorados = None
-            #TODO: POR ALGUM MOTIVO SO FUNCIONA SE FOR DEFINIDO PELO COMANDO PRIMEIRO CASO EU ESPERE QUE ELE OBTENHA O ID DA PLANILHA ELE NÃO CONSEGUE MAS TBM NÃO ACUSA O ERRO NO PRINT DO VERIFICAR CANAL ALGO NA FUNÇÃO DE verificar_checkpoints_nao_enviados
             self.canal_checkpoint_id = None
             self.canal_planilha_id = None
-            
+            #TODO: VERIFICAR QUAL O PROBLEMA DESSES PARAMETROS 
             self.alerta_checkpoint_horario = None
             self.verificar_checkpoint_horario = None
         self.dados = dados
@@ -98,7 +97,8 @@ class ConectorDiscord(discord.Client):
             self.session.commit()
 
         await processa_mensagens_anteriores(self, self)
-
+        
+        #TODO: VERIFICAR QUAL O PROBLEMA DESSAS FUNÇÕES DE ALERTA (NÃO ESTÃO CONSEGUINDO OBTER OS CANAIS DE CHECKPOINT SERA?) 
         self.loop.create_task(alerta_checkpoint(self, self))
         self.loop.create_task(
             verificar_checkpoints_nao_enviados(self, self, self.dados)
@@ -109,15 +109,13 @@ class ConectorDiscord(discord.Client):
         if mensagem.author == self.user:
             return
 
-        #TODO: Converte self.canal_checkpoint_id para um inteiro antes de fazer a comparação CORREÇÃO NO BOT_MODELS NECESSARIA
-        if mensagem.channel.id == int(self.canal_checkpoint_id):
+        if mensagem.channel.id == self.canal_checkpoint_id:
             try:
                 await processa_mensagem_canal_alvo(mensagem)
             except Exception as e:
                 print(f"Exceção ao chamar processa_mensagem_canal_alvo: {e}")
         if (
-            #TODO: AQUI TAMBÉM PRECISA CONVERTER PARA INT por enquanto ate consertar o bot_models
-            mensagem.channel.id == int(self.canal_planilha_id)
+            mensagem.channel.id == self.canal_planilha_id
             and mensagem.content.strip() == '@checkpoint'
         ):
             await envia_planilha(mensagem)
