@@ -41,13 +41,13 @@ class ConectorDiscord(discord.Client):
         else:
             self.enviar_everyone: bool = True
             self.enviar_dm: bool = True
-            #TODO: LEMBRAR QUE ISSO AQUI É UMA LISTA OU SEJA DEVERIA SER ALGO ASSIM: self.ids_ignorados: list = [] 
+            #TODO: LEMBRAR QUE ISSO AQUI É UMA LISTA OU SEJA DEVERIA SER ALGO ASSIM: self.ids_ignorados: list = [] como definir ainda precisa ser estudado no banco esta como str talvez um json.dumps(lista) na hora de usar no comando?
             self.ids_ignorados = None
             self.canal_checkpoint_id = None
             self.canal_planilha_id = None
-            #TODO: VERIFICAR QUAL O PROBLEMA DESSES PARAMETROS 
             self.alerta_checkpoint_horario = None
             self.verificar_checkpoint_horario = None
+
         self.dados = dados
         self.alerta_checkpoint = alerta_checkpoint
         self.verificar_checkpoints_nao_enviados = (
@@ -66,7 +66,6 @@ class ConectorDiscord(discord.Client):
         bot.enviar_dm = self.enviar_dm
         #TODO: IDs ignorados SÃO UMA LISTA, NÃO UMA STRING MAS POR ENQUANTO VAMOS DEIXAR ASSIM!
         bot.ids_ignorados = self.ids_ignorados
-        #bot.ids_ignorados = ','.join(str(id) for id in self.ids_ignorados)
         bot.canal_checkpoint_id = self.canal_checkpoint_id
         bot.canal_planilha_id = self.canal_planilha_id
         bot.alerta_checkpoint_horario = self.alerta_checkpoint_horario
@@ -98,7 +97,7 @@ class ConectorDiscord(discord.Client):
 
         await processa_mensagens_anteriores(self, self)
         
-        #TODO: VERIFICAR QUAL O PROBLEMA DESSAS FUNÇÕES DE ALERTA (NÃO ESTÃO CONSEGUINDO OBTER OS CANAIS DE CHECKPOINT SERA?) 
+        #tasks
         self.loop.create_task(alerta_checkpoint(self, self))
         self.loop.create_task(
             verificar_checkpoints_nao_enviados(self, self, self.dados)
