@@ -58,7 +58,7 @@ class ConectorDiscord(discord.Client):
         await processa_mensagens_anteriores(self, self)
 
         self.loop.create_task(alerta_checkpoint(self, self))
-        #TODO: VC NÃO ESTA PEGANDO PQ?
+
         self.loop.create_task(
             verificar_checkpoints_nao_enviados(self, self, self.dados)
         )
