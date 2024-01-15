@@ -20,6 +20,7 @@ class ExtrasCommands:
         interaction: discord.Interaction,
         usuario1: discord.User,
         usuario2: discord.User,
+        namoro: bool,  
     ):
         porcentagem = random.randint(0, 100)
         metade1 = usuario1.name[: len(usuario1.name) // 2]
@@ -28,17 +29,27 @@ class ExtrasCommands:
 
         buffer = await create_image(usuario1, usuario2, porcentagem)
 
-        if porcentagem <= 35:
-            mensagem_extra = (
-                '😅 Não parece rolar uma química tão grande, mas quem sabe...?'
-            )
-        elif porcentagem <= 65:
-            mensagem_extra = '☺️ Essa combinação tem potencial, que tal um jantar romântico?'
+        if namoro:
+            if porcentagem <= 35:
+                mensagem_extra = (
+                    '😅 Não parece rolar uma química tão grande, mas quem sabe...?'
+                )
+            elif porcentagem <= 65:
+                mensagem_extra = '☺️ Essa combinação tem potencial, que tal um jantar romântico?'
+            else:
+                mensagem_extra = '😍 Combinação perfeita! Quando será o casamento?'
         else:
-            mensagem_extra = '😍 Combinação perfeita! Quando será o casamento?'
+            if porcentagem <= 35:
+                mensagem_extra = (
+                    '😅 Parece que vocês não têm muitos interesses em comum...'
+                )
+            elif porcentagem <= 65:
+                mensagem_extra = '☺️ Essa combinação tem potencial!!'
+            else:
+                mensagem_extra = '😍 Vocês são melhores amigos!'
 
         await interaction.response.send_message(
-            f':hot_face: **Será que vamos ter um casal novo por aqui?** :hot_face: \n {self.cliente_discord.user}: {usuario1.mention} + {usuario2.mention} = ✨ `{nomeship}` ✨\n{mensagem_extra}',
+            f':hot_face: **Será que vamos ter um match novo por aqui?** :hot_face: \n {self.cliente_discord.user}: {usuario1.mention} + {usuario2.mention} = ✨ `{nomeship}` ✨\n{mensagem_extra}',
             file=discord.File(fp=buffer, filename='file.png'),
         )
 
