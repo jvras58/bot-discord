@@ -25,7 +25,7 @@ class BasicCommands:
 
         embed = discord.Embed(
             title='Adicione-me ao seu servidor!',
-            description=f'Para adicionar-me ao seu servidor, clique [aqui]:{link}',
+            description=f'Para adicionar-me ao seu servidor, clique [aqui]({link})',
             color=discord.Color.blue()
         )
         embed.set_thumbnail(url="attachment://image.png")
@@ -43,12 +43,12 @@ class BasicCommands:
             await dm_channel.send(file=discord.File(file, 'comousar.md'))
 
     def load_basic_commands(self, tree):
-        tree.command(name='status', description='Envia o status do bot na dm')(
+        tree.command(name='status', description='Envia o status do bot')(
             self.status
         )
-        tree.command(name='linkbot', description='Envia o link do bot na dm')(
+        tree.command(name='linkbot', description='Envia o link do bot')(
             self.linkbot
         )
         tree.command(
-            name='comousar', description='Envia instruções de como usar o bot'
+            name='comousar', description='Envia instruções de como usar o bot na dm'
         )(self.comousar)

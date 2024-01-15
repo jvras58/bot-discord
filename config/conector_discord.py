@@ -94,7 +94,8 @@ class ConectorDiscord(discord.Client):
             bot.alerta_checkpoint_horario = self.alerta_checkpoint_horario
             bot.verificar_checkpoint_horario = self.verificar_checkpoint_horario
             self.session.commit()
-
+        
+        #TODO: talvez uma função de deixar ele desativado seja interresante pois esse comando só é necessario uma vez...
         await processa_mensagens_anteriores(self, self)
         
         #tasks

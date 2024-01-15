@@ -1,27 +1,40 @@
+# Bot de Checkpoint
+
 ## Introdução
-Fui criadx com Python e aqui estão minhas funções:
+Este bot foi desenvolvido em Python e possui diversas funcionalidades úteis para a gestão de checkpoints. 
 
 ## Comandos
 
-1. **Configuração de canais**: Para o meu correto funcionamento, é necessário fornecer os IDs dos canais do checkpoint e de administração. Esses canais são onde receberei as mensagens e enviarei as planilhas, respectivamente. Use os comandos `/idcheckpoint` e `/idplanilha`.
+### Configuração de Canais
+Para o funcionamento adequado do bot, é necessário configurar os canais de checkpoint e de administração. Estes canais são onde o bot receberá as mensagens e enviará as planilhas. Utilize os comandos `/canalcheckpoint` e `/canalplanilha` para configurá-los.
 
-2. **Link do bot**: Use o comando `/linkbot` para receber o link de adição do bot ao servidor. Esse comando funciona na DM do bot.
+### Link do Bot
+Para adicionar o bot ao seu servidor, utilize o comando `/linkbot`.
 
-3. **Verificação de status**: Possuo o comando `/status` para verificar se estou funcionando corretamente. Esse comando também funciona na DM do bot.
+### Verificação de Status
+Para verificar se o bot está funcionando corretamente, utilize o comando `/status`.
 
-4. **Checkpoint**: Para receber a planilha do checkpoint do dia, basta ir ao canal de administração e digitar `/checkpoint`. Enviarei a planilha para o canal.
+### Checkpoint
+Para receber a planilha do checkpoint do dia, vá ao canal de administração e digite `@checkpoint`. O bot enviará a planilha para o canal.
 
-5. **Monitoramento de checkpoint**: Possuo uma função de monitoramento para verificar quem enviou o checkpoint e avisar quem não enviou via DM. Essa função pode ser ativada/desativada com os comandos `/offavisodm` e `/onavisodm`. O horário de envio definido pelo comando `/horacheckpoint ` seguido pela hora e minuto (`/horacheckpoint HH:MM`) e nos finais de semana essa função é desativada automaticamente.
+### Monitoramento de Checkpoint
+O bot possui uma função de monitoramento para verificar quem enviou o checkpoint e avisar quem não enviou via DM. Esta função pode ser ativada ou desativada com os comandos `/offavisodm` e `/onavisodm`. O horário de envio é definido pelo comando `/horario_verificar` seguido pela hora e minuto (`/horario_verificar HH:MM`). Esta função é desativada automaticamente nos finais de semana.
 
-6. **Mensagem @everyone**: Possuo uma função para enviar uma mensagem `@everyone` no canal do checkpoint em um horário determinado. Essa função pode ser ativada/desativada com os comandos `/offeveryone` e `/oneveryone`. O horário de envio definido pelo comando `/alertadm` seguido pela hora e minuto (`/alertadm HH:MM`) finais de semana essa função é desativada automaticamente.
+### Mensagem @everyone
+O bot pode enviar uma mensagem `@everyone` no canal do checkpoint em um horário determinado. Esta função pode ser ativada ou desativada com os comandos `/offeveryone` e `/oneveryone`. O horário de envio é definido pelo comando `/horario_alerta` seguido pela hora e minuto (`/horario_alerta HH:MM`). Esta função é desativada automaticamente nos finais de semana.
 
-## Funções extras
+## Funções Extras
 
-7. **Mensagem privada**: Possuo uma função de enviar mensagem privada por meio do comando `/dm`, onde enviarei uma mensagem privada para o ID fornecido.
+### Mensagem Privada
+O bot pode enviar mensagens privadas através do comando `/dm`, onde enviará uma mensagem privada para o usuário fornecido.
 
-8. **Ignorar IDs**: Possuo uma função que permite ignorar IDs, ou seja, nenhuma mensagem será enviada para o ID ignorado (útil para períodos de férias). Use os comandos `/idignore` para remover e `/readicionarids` para adicioná-los novamente.
+### Ignorar IDs (Em fase de correção)
+O bot possui uma função que permite ignorar IDs, ou seja, nenhuma mensagem será enviada para o ID ignorado (útil para períodos de férias). Utilize os comandos `/idignore` para remover e `/readicionarids` para adicioná-los novamente.
 
-Todos esses comandos são autoexplicativos. Caso o usuário não saiba utilizá-los, basta digitar o comando e eu mostrarei como espero a mensagem.
+Todos os comandos são autoexplicativos. Se o usuário tiver dúvidas sobre como utilizá-los, basta digitar o comando e o bot mostrará como ele espera a mensagem.
+
+## Aviso
+O bot possui um pequeno banco de dados para armazenar as configurações utilizadas pelo usuário.
 
 ## Autor
 - [Jonathas Vinicius]
