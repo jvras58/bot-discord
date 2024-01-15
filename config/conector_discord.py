@@ -108,10 +108,16 @@ class ConectorDiscord(discord.Client):
         await self.wait_until_ready()
         if mensagem.author == self.user:
             return
-        if mensagem.channel.id == self.canal_checkpoint_id:
-            await processa_mensagem_canal_alvo(mensagem)
+
+        #TODO: Converte self.canal_checkpoint_id para um inteiro antes de fazer a comparação CORREÇÃO NO BOT_MODELS NECESSARIA
+        if mensagem.channel.id == int(self.canal_checkpoint_id):
+            try:
+                await processa_mensagem_canal_alvo(mensagem)
+            except Exception as e:
+                print(f"Exceção ao chamar processa_mensagem_canal_alvo: {e}")
         if (
-            mensagem.channel.id == self.canal_planilha_id
+            #TODO: AQUI TAMBÉM PRECISA CONVERTER PARA INT por enquanto ate consertar o bot_models
+            mensagem.channel.id == int(self.canal_planilha_id)
             and mensagem.content.strip() == '@checkpoint'
         ):
             await envia_planilha(mensagem)

@@ -21,6 +21,7 @@ class Bot(Base):
     enviar_dm: Mapped[bool] = mapped_column()
     #TODO: COMO EU SERIALIZO ESSA LISTA? ISSO É O SUFICIENTE? #acho que não precisa do JsonEncodedDict o Mapped[List[str]] já deve fazer o trabalho direito ou  json.dumps(lista)
     ids_ignorados: Mapped[List[str]] = mapped_column(JsonEncodedDict)
+    #FIXME: ACHAMOS O PROBLEMA CANAIS DEVEM SER INT NÃO STR.... POR ISSO A VERIFICAÇÃO DO CONECTOR DISCORD NÃO TA PEGANDO...
     canal_checkpoint_id: Mapped[str] = mapped_column()
     canal_planilha_id: Mapped[str] = mapped_column()
     alerta_checkpoint_horario: Mapped[datetime] = mapped_column()
