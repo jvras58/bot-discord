@@ -2,33 +2,44 @@ from datetime import datetime
 
 import discord
 from discord import app_commands
+from datetime import datetime, date
+from config.config import get_settings
 
 
 class MentionsCommands:
     def __init__(self, cliente):
         self.cliente_discord = cliente
 
-    #TODO: CONSEGUIMOS INSERIR HORARIO DENTRO DO BANCO PROVAVELMENTE TODOS OS OUTROS AINDA NÃO ESTÃO PEGANDO POR ISSO DEFINIR O CANAL DE CHECKPOINT É O HORARIO AINDA NÃO VAI FAZER O @EVERYONE FUNCIONAR TEMOS QUE FAZER O ALERTA CHECKPOINT PEGAR O NOVO FORMATO DE HORARIO DO BANCO É VERIFICAR TBMM
     @app_commands.describe(horario='Horário do alerta: %H:%M')
     async def definir_alerta(
         self, interaction: discord.Interaction, horario: str
     ):
+        authorization_ids = [int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')]
+        
+        if interaction.user.id not in authorization_ids:
+            await interaction.response.send_message('Você não está autorizado a usar este comando.', ephemeral=True)
+            return
+        
         horario = datetime.strptime(horario, '%H:%M').time()
         
-        # Crie um objeto datetime.datetime com a data atual
-        datetime_obj = datetime.now()
-
-        # Substitua a hora, minuto e segundo do objeto datetime.datetime
-        datetime_obj = datetime_obj.replace(hour=horario.hour, minute=horario.minute, second=horario.second)
-
-        self.cliente_discord.alerta_checkpoint_horario = datetime_obj
+        # Converta o objeto time para datetime
+        horario_datetime = datetime.combine(date.today(), horario)
+        
+        # Salve apenas a hora e os minutos
+        self.cliente_discord.alerta_checkpoint_horario = horario_datetime
         self.cliente_discord.save()
         await interaction.response.send_message(
-            f'Alerta definido para {self.cliente_discord.alerta_checkpoint_horario}.',
+            f'Alerta definido para {self.cliente_discord.alerta_checkpoint_horario.hour}:{self.cliente_discord.alerta_checkpoint_horario.minute}.',
             ephemeral=True,
         )
 
     async def offeveryone(self, interaction: discord.Interaction):
+        authorization_ids = [int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')]
+        
+        if interaction.user.id not in authorization_ids:
+            await interaction.response.send_message('Você não está autorizado a usar este comando.', ephemeral=True)
+            return
+        
         # Responda à interação primeiro
         await interaction.response.send_message(
             'Desativando menções a todos...', ephemeral=True
@@ -37,6 +48,12 @@ class MentionsCommands:
         self.cliente_discord.save()
 
     async def oneveryone(self, interaction: discord.Interaction):
+        authorization_ids = [int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')]
+        
+        if interaction.user.id not in authorization_ids:
+            await interaction.response.send_message('Você não está autorizado a usar este comando.', ephemeral=True)
+            return
+        
         # Responda à interação primeiro
         await interaction.response.send_message(
             'Ativando menções a todos...', ephemeral=True
