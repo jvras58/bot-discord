@@ -22,14 +22,14 @@ class MentionsCommands:
         
         horario = datetime.strptime(horario, '%H:%M').time()
         
-        # Converta o objeto time para datetime
-        horario_datetime = datetime.combine(date.today(), horario)
+        # Converta a hora e os minutos para uma string no formato 'HH:MM'
+        horario_str = horario.strftime('%H:%M')
         
-        # Salve apenas a hora e os minutos
-        self.cliente_discord.alerta_checkpoint_horario = horario_datetime
+        # Salve a hora e os minutos como uma string
+        self.cliente_discord.alerta_checkpoint_horario = horario_str
         self.cliente_discord.save()
         await interaction.response.send_message(
-            f'Alerta definido para {self.cliente_discord.alerta_checkpoint_horario.hour}:{self.cliente_discord.alerta_checkpoint_horario.minute}.',
+            f'Alerta definido para {self.cliente_discord.alerta_checkpoint_horario}.',
             ephemeral=True,
         )
 

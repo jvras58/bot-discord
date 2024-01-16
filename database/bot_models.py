@@ -18,5 +18,5 @@ class Config_bot(Base):
     ids_ignorados: Mapped[str] = mapped_column(nullable=True)
     canal_checkpoint_id: Mapped[int] = mapped_column(nullable=True)
     canal_planilha_id: Mapped[int] = mapped_column(nullable=True)
-    alerta_checkpoint_horario: Mapped[datetime] = mapped_column(nullable=True)
-    verificar_checkpoint_horario: Mapped[datetime] = mapped_column(nullable=True)
+    alerta_checkpoint_horario: Mapped[str] = mapped_column(nullable=True)
+    verificar_checkpoint_horario: Mapped[str] = mapped_column(nullable=True)

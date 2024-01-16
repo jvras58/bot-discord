@@ -1,7 +1,6 @@
 import asyncio
-import datetime
-
 import discord
+from datetime import datetime
 
 
 def is_time_to_check_alerta_checkpoint(conector_discord):
@@ -11,11 +10,16 @@ def is_time_to_check_alerta_checkpoint(conector_discord):
     Retorna True se for um dia útil (segunda a sexta-feira), no horário definido pelo comando definir_alerta.
     Caso contrário, retorna False.
     """
-    horario_alerta = conector_discord.alerta_checkpoint_horario
-    if horario_alerta is None:
+    horario_alerta_str = conector_discord.alerta_checkpoint_horario
+    if horario_alerta_str is None:
         return False
 
-    agora = datetime.datetime.now()
+    # Converta a string de volta para um objeto time
+    horario_alerta = datetime.strptime(horario_alerta_str, '%H:%M').time()
+
+    agora = datetime.now()
+    # print(f'Horário do alerta: {horario_alerta}')
+    # print(agora.time())  # Imprime apenas a hora atual, sem a data
 
     return (
         agora.weekday() < 5
@@ -102,11 +106,14 @@ def is_time_to_check(conector_discord):
     Retorna True se for um dia útil (segunda a sexta-feira), às 18:00 da tarde.
     Caso contrário, retorna False.
     """
-    horario_alerta = conector_discord.verificar_checkpoint_horario
-    if horario_alerta is None:
+    horario_alerta_str = conector_discord.verificar_checkpoint_horario
+    if horario_alerta_str is None:
         return False
 
-    agora = datetime.datetime.now()
+    # Converta a string de volta para um objeto time
+    horario_alerta = datetime.strptime(horario_alerta_str, '%H:%M').time()
+
+    agora = datetime.now()
 
     return (
         agora.weekday() < 5
