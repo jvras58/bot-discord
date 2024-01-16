@@ -12,10 +12,14 @@ class CanalCommands:
     async def canalcheckpoint(
         self, interaction: discord.Interaction, canal: discord.TextChannel
     ):
-        authorization_ids = [int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')]
-        
+        authorization_ids = [
+            int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
+        ]
+
         if interaction.user.id not in authorization_ids:
-            await interaction.response.send_message('Você não está autorizado a usar este comando.', ephemeral=True)
+            await interaction.response.send_message(
+                'Você não está autorizado a usar este comando.', ephemeral=True
+            )
             return
 
         self.cliente_discord.canal_checkpoint_id = canal.id
@@ -28,12 +32,16 @@ class CanalCommands:
     async def canalplanilha(
         self, interaction: discord.Interaction, canal: discord.TextChannel
     ):
-        authorization_ids = [int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')]
-        
+        authorization_ids = [
+            int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
+        ]
+
         if interaction.user.id not in authorization_ids:
-            await interaction.response.send_message('Você não está autorizado a usar este comando.', ephemeral=True)
+            await interaction.response.send_message(
+                'Você não está autorizado a usar este comando.', ephemeral=True
+            )
             return
-        
+
         self.cliente_discord.canal_planilha_id = canal.id
         self.cliente_discord.save()
         await interaction.response.send_message(

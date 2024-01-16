@@ -1,6 +1,11 @@
+import json
+
 import discord
 from discord import app_commands
-import json
+from sqlalchemy.orm import Session
+
+from database.bot_models import Config_bot
+from database.session import engine
 from funcoes.alertas import (
     alerta_checkpoint,
     verificar_checkpoints_nao_enviados,
@@ -11,9 +16,6 @@ from funcoes.comandos import (
 )
 from funcoes.dados import dados, envia_planilha
 
-from sqlalchemy.orm import Session
-from database.bot_models import Config_bot
-from database.session import engine
 
 class ConectorDiscord(discord.Client):
     """
@@ -33,11 +35,17 @@ class ConectorDiscord(discord.Client):
         if config:
             self.enviar_everyone = config.enviar_everyone
             self.enviar_dm = config.enviar_dm
-            self.ids_ignorados = json.loads(config.ids_ignorados) if config.ids_ignorados else []
+            self.ids_ignorados = (
+                json.loads(config.ids_ignorados)
+                if config.ids_ignorados
+                else []
+            )
             self.canal_checkpoint_id = config.canal_checkpoint_id
             self.canal_planilha_id = config.canal_planilha_id
             self.alerta_checkpoint_horario = config.alerta_checkpoint_horario
-            self.verificar_checkpoint_horario = config.verificar_checkpoint_horario
+            self.verificar_checkpoint_horario = (
+                config.verificar_checkpoint_horario
+            )
         else:
             self.enviar_everyone: bool = True
             self.enviar_dm: bool = True
@@ -53,7 +61,6 @@ class ConectorDiscord(discord.Client):
             verificar_checkpoints_nao_enviados
         )
 
-
     def save(self):
         config = self.session.query(Config_bot).first()
 
@@ -63,7 +70,9 @@ class ConectorDiscord(discord.Client):
 
         config.enviar_everyone = self.enviar_everyone
         config.enviar_dm = self.enviar_dm
-        config.ids_ignorados = json.dumps(self.ids_ignorados) if self.ids_ignorados else None
+        config.ids_ignorados = (
+            json.dumps(self.ids_ignorados) if self.ids_ignorados else None
+        )
         config.canal_checkpoint_id = self.canal_checkpoint_id
         config.canal_planilha_id = self.canal_planilha_id
         config.alerta_checkpoint_horario = self.alerta_checkpoint_horario
@@ -81,7 +90,7 @@ class ConectorDiscord(discord.Client):
             await self.tree.sync()
             self.synced = True
         print(f'{self.user} conectado ao Discord!')
-        
+
         config = self.session.query(Config_bot).first()
         if config:
             config.enviar_everyone = self.enviar_everyone
@@ -89,14 +98,18 @@ class ConectorDiscord(discord.Client):
             config.ids_ignorados = self.ids_ignorados
             config.canal_checkpoint_id = self.canal_checkpoint_id
             config.canal_planilha_id = self.canal_planilha_id
-            config.ids_ignorados = json.dumps(self.ids_ignorados) if self.ids_ignorados else None
-            config.verificar_checkpoint_horario = self.verificar_checkpoint_horario
+            config.ids_ignorados = (
+                json.dumps(self.ids_ignorados) if self.ids_ignorados else None
+            )
+            config.verificar_checkpoint_horario = (
+                self.verificar_checkpoint_horario
+            )
             self.session.commit()
-        
-        #TODO: talvez uma função de deixar ele desativado seja interresante pois esse comando só é necessario uma vez...
+
+        # TODO: talvez uma função de deixar ele desativado seja interresante pois esse comando só é necessario uma vez...
         await processa_mensagens_anteriores(self, self)
-        
-        #tasks
+
+        # tasks
         self.loop.create_task(alerta_checkpoint(self, self))
         self.loop.create_task(
             verificar_checkpoints_nao_enviados(self, self, self.dados)
@@ -111,7 +124,7 @@ class ConectorDiscord(discord.Client):
             try:
                 await processa_mensagem_canal_alvo(mensagem)
             except Exception as e:
-                print(f"Exceção ao chamar processa_mensagem_canal_alvo: {e}")
+                print(f'Exceção ao chamar processa_mensagem_canal_alvo: {e}')
         if (
             mensagem.channel.id == self.canal_planilha_id
             and mensagem.content.strip() == '@checkpoint'

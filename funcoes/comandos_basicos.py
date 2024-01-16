@@ -21,18 +21,18 @@ class BasicCommands:
             bot_user.id
         )
 
-        file = discord.File(imagem_buffer, filename="image.png")
+        file = discord.File(imagem_buffer, filename='image.png')
 
         embed = discord.Embed(
             title='Adicione-me ao seu servidor!',
             description=f'Para adicionar-me ao seu servidor, clique [aqui]({link})',
-            color=discord.Color.blue()
+            color=discord.Color.blue(),
         )
-        embed.set_thumbnail(url="attachment://image.png")
+        embed.set_thumbnail(url='attachment://image.png')
 
-        await interaction.response.send_message(embed=embed, file=file, ephemeral=True)
-
-
+        await interaction.response.send_message(
+            embed=embed, file=file, ephemeral=True
+        )
 
     async def comousar(self, interaction: discord.Interaction):
         await interaction.response.send_message(
@@ -50,5 +50,6 @@ class BasicCommands:
             self.linkbot
         )
         tree.command(
-            name='comousar', description='Envia instruções de como usar o bot na dm'
+            name='comousar',
+            description='Envia instruções de como usar o bot na dm',
         )(self.comousar)

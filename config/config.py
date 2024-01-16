@@ -9,12 +9,12 @@ class Settings(BaseSettings):
     """
 
     model_config = SettingsConfigDict(env_file='.env', env_file_encode='utf-8')
-    
+
     # Configurações do bot
     DISCORD_TOKEN: str
     DB_URL: str
     AUTHORIZATION_IDS: str
-    
+
     # Configurações de imagem de alguns comandos
     AVATAR_SIZE: tuple = (250, 250)
     BACKGROUND_SIZE: tuple = (500, 280)

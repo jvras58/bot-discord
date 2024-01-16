@@ -1,6 +1,7 @@
 import asyncio
-import discord
 from datetime import datetime
+
+import discord
 
 
 def is_time_to_check_alerta_checkpoint(conector_discord):
@@ -38,12 +39,12 @@ async def alerta_checkpoint(cliente_discord, conector_discord):
     """
     await cliente_discord.wait_until_ready()
     while not cliente_discord.is_closed():
-        
+
         if is_time_to_check_alerta_checkpoint(conector_discord):
             canal = cliente_discord.get_channel(
                 conector_discord.canal_checkpoint_id
             )
-            
+
             if canal is not None:
                 if (
                     conector_discord.enviar_everyone
@@ -56,6 +57,7 @@ async def alerta_checkpoint(cliente_discord, conector_discord):
             )   # para ele não ficar spawnando a mensagem direto
         else:
             await asyncio.sleep(1)
+
 
 async def verificar_checkpoints_nao_enviados(
     cliente_discord, conector_discord, dados

@@ -196,7 +196,9 @@ async def processa_mensagens_anteriores(conector_discord, cliente_discord):
 
 
 async def create_image(
-    usuario1: discord.User, usuario2: discord.User = None, porcentagem: int = None
+    usuario1: discord.User,
+    usuario2: discord.User = None,
+    porcentagem: int = None,
 ):
     imagem1 = await usuario1.avatar.read()
     avatar1 = Image.open(io.BytesIO(imagem1)).resize(
@@ -205,7 +207,9 @@ async def create_image(
 
     if usuario2:
         planodefundo = Image.new(
-            'RGB', get_settings().BACKGROUND_SIZE, get_settings().BACKGROUND_COLOR
+            'RGB',
+            get_settings().BACKGROUND_SIZE,
+            get_settings().BACKGROUND_COLOR,
         )
         planodefundo.paste(avatar1, (0, 0))
 
@@ -234,7 +238,9 @@ async def create_image(
             radius=get_settings().RECTANGLE_RADIUS,
         )
 
-        fonte = ImageFont.truetype('RobotoMono-Bold.ttf', get_settings().FONT_SIZE)
+        fonte = ImageFont.truetype(
+            'RobotoMono-Bold.ttf', get_settings().FONT_SIZE
+        )
         fundodraw.text(
             (230, get_settings().AVATAR_SIZE[1]), f'{porcentagem}%', font=fonte
         )

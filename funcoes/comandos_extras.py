@@ -20,7 +20,7 @@ class ExtrasCommands:
         interaction: discord.Interaction,
         usuario1: discord.User,
         usuario2: discord.User,
-        namoro: bool,  
+        namoro: bool,
     ):
         porcentagem = random.randint(0, 100)
         metade1 = usuario1.name[: len(usuario1.name) // 2]
@@ -31,13 +31,13 @@ class ExtrasCommands:
 
         if namoro:
             if porcentagem <= 35:
-                mensagem_extra = (
-                    '😅 Não parece rolar uma química tão grande, mas quem sabe...?'
-                )
+                mensagem_extra = '😅 Não parece rolar uma química tão grande, mas quem sabe...?'
             elif porcentagem <= 65:
                 mensagem_extra = '☺️ Essa combinação tem potencial, que tal um jantar romântico?'
             else:
-                mensagem_extra = '😍 Combinação perfeita! Quando será o casamento?'
+                mensagem_extra = (
+                    '😍 Combinação perfeita! Quando será o casamento?'
+                )
         else:
             if porcentagem <= 35:
                 mensagem_extra = (
@@ -55,8 +55,10 @@ class ExtrasCommands:
 
     async def ranking(self, interaction: discord.Interaction):
         # Extrai o canal do checkpoint
-        canal_alvo = self.cliente_discord.get_channel(self.cliente_discord.canal_checkpoint_id)
-        
+        canal_alvo = self.cliente_discord.get_channel(
+            self.cliente_discord.canal_checkpoint_id
+        )
+
         # Cria um dicionário para armazenar o número de checkpoints enviados por cada usuário
         ranking = defaultdict(int)
 
@@ -70,11 +72,15 @@ class ExtrasCommands:
             ranking[mensagem.author.id] += 1
 
         # Classifica o dicionário pelo número de checkpoints enviados
-        ranking_ordenado = sorted(ranking.items(), key=lambda item: item[1], reverse=True)
+        ranking_ordenado = sorted(
+            ranking.items(), key=lambda item: item[1], reverse=True
+        )
 
         # Envia o ranking no chat
         for i, (id_usuario, num_checkpoints) in enumerate(ranking_ordenado, 1):
-            await interaction.response.send_message(f'{i}. <@{id_usuario}>: {num_checkpoints} checkpoints')
+            await interaction.response.send_message(
+                f'{i}. <@{id_usuario}>: {num_checkpoints} checkpoints'
+            )
 
     def load_extras_commands(self, tree):
         tree.command(

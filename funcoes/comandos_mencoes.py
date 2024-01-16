@@ -2,7 +2,7 @@ from datetime import datetime
 
 import discord
 from discord import app_commands
-from datetime import datetime, date
+
 from config.config import get_settings
 
 
@@ -14,17 +14,21 @@ class MentionsCommands:
     async def definir_alerta(
         self, interaction: discord.Interaction, horario: str
     ):
-        authorization_ids = [int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')]
-        
+        authorization_ids = [
+            int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
+        ]
+
         if interaction.user.id not in authorization_ids:
-            await interaction.response.send_message('Você não está autorizado a usar este comando.', ephemeral=True)
+            await interaction.response.send_message(
+                'Você não está autorizado a usar este comando.', ephemeral=True
+            )
             return
-        
+
         horario = datetime.strptime(horario, '%H:%M').time()
-        
+
         # Converta a hora e os minutos para uma string no formato 'HH:MM'
         horario_str = horario.strftime('%H:%M')
-        
+
         # Salve a hora e os minutos como uma string
         self.cliente_discord.alerta_checkpoint_horario = horario_str
         self.cliente_discord.save()
@@ -34,12 +38,16 @@ class MentionsCommands:
         )
 
     async def offeveryone(self, interaction: discord.Interaction):
-        authorization_ids = [int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')]
-        
+        authorization_ids = [
+            int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
+        ]
+
         if interaction.user.id not in authorization_ids:
-            await interaction.response.send_message('Você não está autorizado a usar este comando.', ephemeral=True)
+            await interaction.response.send_message(
+                'Você não está autorizado a usar este comando.', ephemeral=True
+            )
             return
-        
+
         # Responda à interação primeiro
         await interaction.response.send_message(
             'Desativando menções a todos...', ephemeral=True
@@ -48,12 +56,16 @@ class MentionsCommands:
         self.cliente_discord.save()
 
     async def oneveryone(self, interaction: discord.Interaction):
-        authorization_ids = [int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')]
-        
+        authorization_ids = [
+            int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
+        ]
+
         if interaction.user.id not in authorization_ids:
-            await interaction.response.send_message('Você não está autorizado a usar este comando.', ephemeral=True)
+            await interaction.response.send_message(
+                'Você não está autorizado a usar este comando.', ephemeral=True
+            )
             return
-        
+
         # Responda à interação primeiro
         await interaction.response.send_message(
             'Ativando menções a todos...', ephemeral=True

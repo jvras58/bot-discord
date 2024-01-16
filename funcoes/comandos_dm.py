@@ -1,10 +1,11 @@
+import json
 from datetime import datetime
 
 import discord
 from discord import app_commands
-import json
-from datetime import datetime, date
+
 from config.config import get_settings
+
 
 class DmCommands:
     def __init__(self, cliente):
@@ -14,17 +15,21 @@ class DmCommands:
     async def alerta_dm_horario(
         self, interaction: discord.Interaction, horario: str
     ):
-        authorization_ids = [int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')]
-        
+        authorization_ids = [
+            int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
+        ]
+
         if interaction.user.id not in authorization_ids:
-            await interaction.response.send_message('Você não está autorizado a usar este comando.', ephemeral=True)
+            await interaction.response.send_message(
+                'Você não está autorizado a usar este comando.', ephemeral=True
+            )
             return
-        
+
         horario = datetime.strptime(horario, '%H:%M').time()
-        
+
         # Converta a hora e os minutos para uma string no formato 'HH:MM'
         horario_str = horario.strftime('%H:%M')
-        
+
         # Salve a hora e os minutos como uma string
         self.cliente_discord.verificar_checkpoint_horario = horario_str
         self.cliente_discord.save()
@@ -34,12 +39,16 @@ class DmCommands:
         )
 
     async def offavisodm(self, interaction: discord.Interaction):
-        authorization_ids = [int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')]
-        
+        authorization_ids = [
+            int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
+        ]
+
         if interaction.user.id not in authorization_ids:
-            await interaction.response.send_message('Você não está autorizado a usar este comando.', ephemeral=True)
+            await interaction.response.send_message(
+                'Você não está autorizado a usar este comando.', ephemeral=True
+            )
             return
-            
+
         await interaction.response.send_message(
             'Desativando aviso de mensagem direta...', ephemeral=True
         )
@@ -47,12 +56,16 @@ class DmCommands:
         self.cliente_discord.save()
 
     async def onavisodm(self, interaction: discord.Interaction):
-        authorization_ids = [int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')]
-        
+        authorization_ids = [
+            int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
+        ]
+
         if interaction.user.id not in authorization_ids:
-            await interaction.response.send_message('Você não está autorizado a usar este comando.', ephemeral=True)
+            await interaction.response.send_message(
+                'Você não está autorizado a usar este comando.', ephemeral=True
+            )
             return
-            
+
         await interaction.response.send_message(
             'Ativando aviso de mensagem direta...', ephemeral=True
         )
@@ -62,34 +75,50 @@ class DmCommands:
     # TODO: discord.User é um objeto que representa um usuário do Discord então na vez de passar diretamente um parametro id eu posso passar um objeto discord.User
     @app_commands.describe(id='identificador do usuário a ser ignorado')
     async def idignore(self, interaction: discord.Interaction, id: str):
-        authorization_ids = [int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')]
-        
+        authorization_ids = [
+            int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
+        ]
+
         if interaction.user.id not in authorization_ids:
-            await interaction.response.send_message('Você não está autorizado a usar este comando.', ephemeral=True)
+            await interaction.response.send_message(
+                'Você não está autorizado a usar este comando.', ephemeral=True
+            )
             return
-        
+
         if isinstance(self.cliente_discord.ids_ignorados, str):
-            self.cliente_discord.ids_ignorados = json.loads(self.cliente_discord.ids_ignorados)  # Converte a string JSON de volta em uma lista
+            self.cliente_discord.ids_ignorados = json.loads(
+                self.cliente_discord.ids_ignorados
+            )  # Converte a string JSON de volta em uma lista
         self.cliente_discord.ids_ignorados.append(int(id))
         self.cliente_discord.save()
         ids_ignorados_json = json.dumps(self.cliente_discord.ids_ignorados)
         await interaction.response.send_message(
-            f'ID de usuário {id} adicionado à lista de ignorados. Lista atual: {ids_ignorados_json}', ephemeral=True
+            f'ID de usuário {id} adicionado à lista de ignorados. Lista atual: {ids_ignorados_json}',
+            ephemeral=True,
         )
 
     @app_commands.describe(id='identificador do usuário a ser ree-adicionado')
     async def readicionarids(self, interaction: discord.Interaction, id: str):
-        authorization_ids = [int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')]
-        
+        authorization_ids = [
+            int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
+        ]
+
         if interaction.user.id not in authorization_ids:
-            await interaction.response.send_message('Você não está autorizado a usar este comando.', ephemeral=True)
+            await interaction.response.send_message(
+                'Você não está autorizado a usar este comando.', ephemeral=True
+            )
             return
-        
-        self.cliente_discord.ids_ignorados.remove(int(id))  # Remove o ID da lista
+
+        self.cliente_discord.ids_ignorados.remove(
+            int(id)
+        )  # Remove o ID da lista
         self.cliente_discord.save()
-        ids_ignorados_json = json.dumps(self.cliente_discord.ids_ignorados)  # Converte a lista em JSON
+        ids_ignorados_json = json.dumps(
+            self.cliente_discord.ids_ignorados
+        )  # Converte a lista em JSON
         await interaction.response.send_message(
-            f'ID de usuário {id} removido da lista de ignorados. Lista atual: {ids_ignorados_json}', ephemeral=True
+            f'ID de usuário {id} removido da lista de ignorados. Lista atual: {ids_ignorados_json}',
+            ephemeral=True,
         )
 
     @app_commands.describe(
