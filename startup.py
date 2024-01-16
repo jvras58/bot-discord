@@ -8,7 +8,6 @@ from funcoes.comandos_dm import DmCommands
 from funcoes.comandos_extras import ExtrasCommands
 from funcoes.comandos_mencoes import MentionsCommands
 
-
 cliente_discord = ConectorDiscord()
 tree = cliente_discord.tree
 
