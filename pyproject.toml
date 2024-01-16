@@ -50,12 +50,12 @@ extend_skip = ['migrations']
 pythonpath = "."
 
 [tool.blue]
-extend-exclude = '(migrations/)'
+extend-exclude = '(migrations/|startup.py)'
+
 
 [tool.taskipy.tasks]
 lint = 'ruff . && blue --check . --diff'
-#FIXME: format acaba quebrando o código no startup.py 
-# format = 'blue .  && isort .'
+format = 'blue .  && isort .'
 run = 'python startup.py'
 pre_test = 'task lint'
 test = 'pytest -s -x --cov=fast_zero -vv'
