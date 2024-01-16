@@ -25,7 +25,7 @@ class CanalCommands:
         self.cliente_discord.canal_checkpoint_id = canal.id
         self.cliente_discord.save()
         await interaction.response.send_message(
-            f'ID do canal de checkpoint definido para {canal}.'
+            f'ID do canal de checkpoint definido para {canal}.', ephemeral=True
         )
 
     @app_commands.describe(canal='Canal de checkpoint')
@@ -45,7 +45,7 @@ class CanalCommands:
         self.cliente_discord.canal_planilha_id = canal.id
         self.cliente_discord.save()
         await interaction.response.send_message(
-            f'ID do canal da planilha definido para {canal}.'
+            f'ID do canal da planilha definido para {canal}.', ephemeral=True
         )
 
     def load_channel_commands(self, tree):
