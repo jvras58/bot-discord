@@ -5,12 +5,12 @@ from sqlalchemy.orm import Mapped, mapped_column
 from config.base_model import Base
 
 
-class Bot(Base):
+class Config_bot(Base):
     """
     Representa a tabela configurações do bot no banco de dados.
     """
 
-    __tablename__ = 'bot'
+    __tablename__ = 'config'
 
     id: Mapped[int] = mapped_column(primary_key=True, name='id')
     enviar_everyone: Mapped[bool] = mapped_column(nullable=True)

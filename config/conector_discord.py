@@ -12,7 +12,7 @@ from funcoes.comandos import (
 from funcoes.dados import dados, envia_planilha
 
 from sqlalchemy.orm import Session
-from database.bot_models import Bot
+from database.bot_models import Config_bot
 from database.session import engine
 
 class ConectorDiscord(discord.Client):
@@ -29,15 +29,15 @@ class ConectorDiscord(discord.Client):
         self.synced = False
         self.tree = app_commands.CommandTree(self)
         self.session = Session(bind=engine)
-        bot = self.session.query(Bot).first()
-        if bot:
-            self.enviar_everyone = bot.enviar_everyone
-            self.enviar_dm = bot.enviar_dm
-            self.ids_ignorados = json.loads(bot.ids_ignorados) if bot.ids_ignorados else []
-            self.canal_checkpoint_id = bot.canal_checkpoint_id
-            self.canal_planilha_id = bot.canal_planilha_id
-            self.alerta_checkpoint_horario = bot.alerta_checkpoint_horario
-            self.verificar_checkpoint_horario = bot.verificar_checkpoint_horario
+        config = self.session.query(Config_bot).first()
+        if config:
+            self.enviar_everyone = config.enviar_everyone
+            self.enviar_dm = config.enviar_dm
+            self.ids_ignorados = json.loads(config.ids_ignorados) if config.ids_ignorados else []
+            self.canal_checkpoint_id = config.canal_checkpoint_id
+            self.canal_planilha_id = config.canal_planilha_id
+            self.alerta_checkpoint_horario = config.alerta_checkpoint_horario
+            self.verificar_checkpoint_horario = config.verificar_checkpoint_horario
         else:
             self.enviar_everyone: bool = True
             self.enviar_dm: bool = True
@@ -55,19 +55,19 @@ class ConectorDiscord(discord.Client):
 
 
     def save(self):
-        bot = self.session.query(Bot).first()
+        config = self.session.query(Config_bot).first()
 
-        if not bot:
-            bot = Bot()
-            self.session.add(bot)
+        if not config:
+            config = Config_bot()
+            self.session.add(config)
 
-        bot.enviar_everyone = self.enviar_everyone
-        bot.enviar_dm = self.enviar_dm
-        bot.ids_ignorados = json.dumps(self.ids_ignorados) if self.ids_ignorados else None
-        bot.canal_checkpoint_id = self.canal_checkpoint_id
-        bot.canal_planilha_id = self.canal_planilha_id
-        bot.alerta_checkpoint_horario = self.alerta_checkpoint_horario
-        bot.verificar_checkpoint_horario = self.verificar_checkpoint_horario
+        config.enviar_everyone = self.enviar_everyone
+        config.enviar_dm = self.enviar_dm
+        config.ids_ignorados = json.dumps(self.ids_ignorados) if self.ids_ignorados else None
+        config.canal_checkpoint_id = self.canal_checkpoint_id
+        config.canal_planilha_id = self.canal_planilha_id
+        config.alerta_checkpoint_horario = self.alerta_checkpoint_horario
+        config.verificar_checkpoint_horario = self.verificar_checkpoint_horario
 
         self.session.commit()
         self.session.close()
@@ -82,15 +82,15 @@ class ConectorDiscord(discord.Client):
             self.synced = True
         print(f'{self.user} conectado ao Discord!')
         
-        bot = self.session.query(Bot).first()
-        if bot:
-            bot.enviar_everyone = self.enviar_everyone
-            bot.enviar_dm = self.enviar_dm
-            bot.ids_ignorados = self.ids_ignorados
-            bot.canal_checkpoint_id = self.canal_checkpoint_id
-            bot.canal_planilha_id = self.canal_planilha_id
-            bot.ids_ignorados = json.dumps(self.ids_ignorados) if self.ids_ignorados else None
-            bot.verificar_checkpoint_horario = self.verificar_checkpoint_horario
+        config = self.session.query(Config_bot).first()
+        if config:
+            config.enviar_everyone = self.enviar_everyone
+            config.enviar_dm = self.enviar_dm
+            config.ids_ignorados = self.ids_ignorados
+            config.canal_checkpoint_id = self.canal_checkpoint_id
+            config.canal_planilha_id = self.canal_planilha_id
+            config.ids_ignorados = json.dumps(self.ids_ignorados) if self.ids_ignorados else None
+            config.verificar_checkpoint_horario = self.verificar_checkpoint_horario
             self.session.commit()
         
         #TODO: talvez uma função de deixar ele desativado seja interresante pois esse comando só é necessario uma vez...
