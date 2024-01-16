@@ -1,8 +1,8 @@
-"""mudança de tipo datatime para str
+"""bigbang config models
 
-Revision ID: e01cbed7ad69
+Revision ID: 9981f30cafcf
 Revises: 
-Create Date: 2024-01-16 11:56:09.943085
+Create Date: 2024-01-16 15:08:54.846087
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'e01cbed7ad69'
+revision: str = '9981f30cafcf'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
