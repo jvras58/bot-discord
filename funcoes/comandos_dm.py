@@ -2,7 +2,7 @@ from datetime import datetime
 
 import discord
 from discord import app_commands
-
+import json
 
 class DmCommands:
     def __init__(self, cliente):
@@ -43,18 +43,22 @@ class DmCommands:
     # TODO: discord.User é um objeto que representa um usuário do Discord então na vez de passar diretamente um parametro id eu posso passar um objeto discord.User
     @app_commands.describe(id='identificador do usuário a ser ignorado')
     async def idignore(self, interaction: discord.Interaction, id: str):
-        self.cliente_discord.ids_ignorados = int(id)
+        if isinstance(self.cliente_discord.ids_ignorados, str):
+            self.cliente_discord.ids_ignorados = json.loads(self.cliente_discord.ids_ignorados)  # Converte a string JSON de volta em uma lista
+        self.cliente_discord.ids_ignorados.append(int(id))
         self.cliente_discord.save()
+        ids_ignorados_json = json.dumps(self.cliente_discord.ids_ignorados)
         await interaction.response.send_message(
-            f'ID de usuário {self.cliente_discord.ids_ignorados} adicionado à lista de ignorados.'
+            f'ID de usuário {id} adicionado à lista de ignorados. Lista atual: {ids_ignorados_json}'
         )
 
     @app_commands.describe(id='identificador do usuário a ser ree-adicionado')
     async def readicionarids(self, interaction: discord.Interaction, id: str):
-        self.cliente_discord.ids_ignorados.remove(int(id))
+        self.cliente_discord.ids_ignorados.remove(int(id))  # Remove o ID da lista
         self.cliente_discord.save()
+        ids_ignorados_json = json.dumps(self.cliente_discord.ids_ignorados)  # Converte a lista em JSON
         await interaction.response.send_message(
-            f'ID de usuário {id} removido da lista de ignorados.'
+            f'ID de usuário {id} removido da lista de ignorados. Lista atual: {ids_ignorados_json}'
         )
 
     @app_commands.describe(

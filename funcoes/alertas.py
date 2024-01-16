@@ -127,9 +127,6 @@ def filter_members(membros, usuarios_enviaram, ids_ignorados):
     Returns:
         list: Lista filtrada de membros.
     """
-    # TODO: ADICIONADO POR ENQUANTO POIS NO BANCO ELE E UM STR (POR ENQUANTO...)
-    if ids_ignorados is None:
-        ids_ignorados = []
     return [
         membro
         for membro in membros

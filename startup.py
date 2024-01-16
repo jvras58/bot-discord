@@ -41,6 +41,3 @@ while True:
     except Exception as e:
         print(f'Erro: {e}. Reiniciando o bot.')
         time.sleep(5)  # Pausa por 5s
-
-
-#TODO: PROBLEMA: IDS_IGNORADOS É UMA LISTA E NO MOMENTO POR FALTA DE CONHECIMENTO ESTOU COLOCANDO COMO STRING DEPOIS AVERIGUAR COMO FAZER DE FATO ISSO...

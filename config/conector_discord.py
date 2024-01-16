@@ -1,6 +1,6 @@
 import discord
 from discord import app_commands
-
+import json
 from funcoes.alertas import (
     alerta_checkpoint,
     verificar_checkpoints_nao_enviados,
@@ -33,7 +33,7 @@ class ConectorDiscord(discord.Client):
         if bot:
             self.enviar_everyone = bot.enviar_everyone
             self.enviar_dm = bot.enviar_dm
-            self.ids_ignorados = bot.ids_ignorados
+            self.ids_ignorados = json.loads(bot.ids_ignorados) if bot.ids_ignorados else []
             self.canal_checkpoint_id = bot.canal_checkpoint_id
             self.canal_planilha_id = bot.canal_planilha_id
             self.alerta_checkpoint_horario = bot.alerta_checkpoint_horario
@@ -41,8 +41,7 @@ class ConectorDiscord(discord.Client):
         else:
             self.enviar_everyone: bool = True
             self.enviar_dm: bool = True
-            #TODO: LEMBRAR QUE ISSO AQUI É UMA LISTA OU SEJA DEVERIA SER ALGO ASSIM: self.ids_ignorados: list = [] como definir ainda precisa ser estudado no banco esta como str talvez um json.dumps(lista) na hora de usar no comando?
-            self.ids_ignorados = None
+            self.ids_ignorados = []
             self.canal_checkpoint_id = None
             self.canal_planilha_id = None
             self.alerta_checkpoint_horario = None
@@ -64,8 +63,7 @@ class ConectorDiscord(discord.Client):
 
         bot.enviar_everyone = self.enviar_everyone
         bot.enviar_dm = self.enviar_dm
-        #TODO: IDs ignorados SÃO UMA LISTA, NÃO UMA STRING MAS POR ENQUANTO VAMOS DEIXAR ASSIM!
-        bot.ids_ignorados = self.ids_ignorados
+        bot.ids_ignorados = json.dumps(self.ids_ignorados) if self.ids_ignorados else None
         bot.canal_checkpoint_id = self.canal_checkpoint_id
         bot.canal_planilha_id = self.canal_planilha_id
         bot.alerta_checkpoint_horario = self.alerta_checkpoint_horario
@@ -91,7 +89,7 @@ class ConectorDiscord(discord.Client):
             bot.ids_ignorados = self.ids_ignorados
             bot.canal_checkpoint_id = self.canal_checkpoint_id
             bot.canal_planilha_id = self.canal_planilha_id
-            bot.alerta_checkpoint_horario = self.alerta_checkpoint_horario
+            bot.ids_ignorados = json.dumps(self.ids_ignorados) if self.ids_ignorados else None
             bot.verificar_checkpoint_horario = self.verificar_checkpoint_horario
             self.session.commit()
         
