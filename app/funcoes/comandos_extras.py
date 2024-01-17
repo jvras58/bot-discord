@@ -3,7 +3,6 @@ from collections import defaultdict
 
 import discord
 from discord import app_commands
-
 from funcoes.comandos import create_image
 
 

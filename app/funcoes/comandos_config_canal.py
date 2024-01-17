@@ -1,7 +1,6 @@
 import discord
-from discord import app_commands
-
 from config.config import get_settings
+from discord import app_commands
 
 
 class CanalCommands:

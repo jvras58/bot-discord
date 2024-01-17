@@ -1,11 +1,8 @@
 import json
 
 import discord
-from discord import app_commands
-from sqlalchemy.orm import Session
-
-from models.bot_models import Config_bot
 from database.session import engine
+from discord import app_commands
 from funcoes.alertas import (
     alerta_checkpoint,
     verificar_checkpoints_nao_enviados,
@@ -15,6 +12,8 @@ from funcoes.comandos import (
     processa_mensagens_anteriores,
 )
 from funcoes.dados import dados, envia_planilha
+from models.bot_models import Config_bot
+from sqlalchemy.orm import Session
 
 
 class ConectorDiscord(discord.Client):

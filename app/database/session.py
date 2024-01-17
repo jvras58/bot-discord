@@ -1,7 +1,6 @@
+from config.config import get_settings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-
-from config.config import get_settings
 
 engine = create_engine(get_settings().DB_URL)
 

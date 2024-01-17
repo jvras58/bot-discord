@@ -1,6 +1,5 @@
-from sqlalchemy.orm import Mapped, mapped_column
-
 from config.base_model import Base
+from sqlalchemy.orm import Mapped, mapped_column
 
 
 class Config_bot(Base):
