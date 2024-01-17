@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "projeto"
-version = "0.1.0"
-description = ""
+name = "app"
+version = "0.1.1"
+description = "Bot feito utilizando a api discord"
 authors = ["jvras <jvras@cin.ufpe.br>"]
 readme = "README.md"
 

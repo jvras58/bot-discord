@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from config.config import get_settings
+from app.config.config import get_settings
 
 
 @pytest.mark.asyncio

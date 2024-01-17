@@ -4,11 +4,11 @@ from unittest.mock import AsyncMock, MagicMock
 import discord
 import pytest
 
-from config.conector_discord import ConectorDiscord
-from funcoes.comandos_basicos import BasicCommands
-from funcoes.comandos_config_canal import CanalCommands
-from funcoes.comandos_dm import DmCommands
-from funcoes.comandos_mencoes import MentionsCommands
+from app.config.conector_discord import ConectorDiscord
+from app.funcoes.comandos_basicos import BasicCommands
+from app.funcoes.comandos_config_canal import CanalCommands
+from app.funcoes.comandos_dm import DmCommands
+from app.funcoes.comandos_mencoes import MentionsCommands
 
 
 @pytest.fixture

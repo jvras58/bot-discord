@@ -5,8 +5,8 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
-from config.base_model import Base
-from config.config import get_settings
+from app.config.base_model import Base
+from app.config.config import get_settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -28,7 +28,7 @@ if config.config_file_name is not None:
 #database\bot_models.py
 
 app_models = [
-    'database.bot_models',
+    'app.models.bot_models',
 
 ]
 

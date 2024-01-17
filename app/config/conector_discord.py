@@ -4,7 +4,7 @@ import discord
 from discord import app_commands
 from sqlalchemy.orm import Session
 
-from database.bot_models import Config_bot
+from models.bot_models import Config_bot
 from database.session import engine
 from funcoes.alertas import (
     alerta_checkpoint,
