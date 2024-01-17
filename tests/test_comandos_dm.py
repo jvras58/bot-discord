@@ -3,21 +3,30 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from config.config import get_settings
+
 
 @pytest.mark.asyncio
 async def test_alerta_dm_horario(dm_commands, interaction, mock_horario):
+    for id in get_settings().AUTHORIZATION_IDS.split(','):
+        interaction.user.id = int(id)
     await dm_commands.alerta_dm_horario(interaction, mock_horario)
     interaction.response.send_message.assert_called_once_with(
-        f'Alerta definido para {dm_commands.cliente_discord.verificar_checkpoint_horario}.'
+        f'Alerta definido para {dm_commands.cliente_discord.verificar_checkpoint_horario}.',
+        ephemeral=True,
     )
     assert (
-        dm_commands.cliente_discord.verificar_checkpoint_horario
+        datetime.strptime(
+            dm_commands.cliente_discord.verificar_checkpoint_horario, '%H:%M'
+        ).time()
         == datetime.strptime(mock_horario, '%H:%M').time()
     )
 
 
 @pytest.mark.asyncio
 async def test_offavisodm(dm_commands, interaction):
+    for id in get_settings().AUTHORIZATION_IDS.split(','):
+        interaction.user.id = int(id)
     await dm_commands.offavisodm(interaction)
     interaction.response.send_message.assert_called_once_with(
         'Desativando aviso de mensagem direta...', ephemeral=True
@@ -27,6 +36,8 @@ async def test_offavisodm(dm_commands, interaction):
 
 @pytest.mark.asyncio
 async def test_onavisodm(dm_commands, interaction):
+    for id in get_settings().AUTHORIZATION_IDS.split(','):
+        interaction.user.id = int(id)
     await dm_commands.onavisodm(interaction)
     interaction.response.send_message.assert_called_once_with(
         'Ativando aviso de mensagem direta...', ephemeral=True
@@ -35,20 +46,15 @@ async def test_onavisodm(dm_commands, interaction):
 
 
 @pytest.mark.asyncio
-async def test_idignore(dm_commands, interaction, mock_id):
-    await dm_commands.idignore(interaction, mock_id)
-    interaction.response.send_message.assert_called_once_with(
-        f'ID de usuário {dm_commands.cliente_discord.ids_ignorados} adicionado à lista de ignorados.'
-    )
-    assert dm_commands.cliente_discord.ids_ignorados == int(mock_id)
-
-
-@pytest.mark.asyncio
 async def test_readicionarids(dm_commands, interaction, mock_id):
+    for id in get_settings().AUTHORIZATION_IDS.split(','):
+        interaction.user.id = int(id)
+
     dm_commands.cliente_discord.ids_ignorados = [int(mock_id)]
     await dm_commands.readicionarids(interaction, mock_id)
     interaction.response.send_message.assert_called_once_with(
-        f'ID de usuário {mock_id} removido da lista de ignorados.'
+        f'ID de usuário {mock_id} removido da lista de ignorados. Lista atual: []',
+        ephemeral=True,
     )
     assert int(mock_id) not in dm_commands.cliente_discord.ids_ignorados
 

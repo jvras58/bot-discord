@@ -9,6 +9,7 @@ async def test_status(basic_commands, interaction):
     interaction.response.send_message.assert_called_once()
 
 
+# FIXME: CORREÇÃO NO TESTE DO ENVIO DE LINK
 # @pytest.mark.asyncio
 # async def test_linkbot(basic_commands, interaction):
 #     # Cria um objeto AsyncMock para substituir 'avatar.read'
