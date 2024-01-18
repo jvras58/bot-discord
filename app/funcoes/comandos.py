@@ -3,9 +3,10 @@ import io
 
 import discord
 import emoji
-from config.config import get_settings
-from funcoes.dados import dados, dados_anteriores, salvar_dados
 from PIL import Image, ImageDraw, ImageFont
+
+from app.config.config import get_settings
+from app.funcoes.dados import dados, dados_anteriores, salvar_dados
 
 
 async def processa_mensagem_canal_alvo(mensagem):

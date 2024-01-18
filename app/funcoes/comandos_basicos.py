@@ -1,6 +1,7 @@
 import discord
-from config.conector_discord import ConectorDiscord
-from funcoes.comandos import create_image
+
+from app.config.conector_discord import ConectorDiscord
+from app.funcoes.comandos import create_image
 
 
 class BasicCommands:

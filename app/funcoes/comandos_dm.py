@@ -2,8 +2,9 @@ import json
 from datetime import datetime
 
 import discord
-from config.config import get_settings
 from discord import app_commands
+
+from app.config.config import get_settings
 
 
 class DmCommands:

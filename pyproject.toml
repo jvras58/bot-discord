@@ -58,7 +58,7 @@ lint = 'ruff . && blue --check . --diff'
 format = 'blue .  && isort .'
 run = 'python startup.py'
 pre_test = 'task lint'
-test = 'pytest -s -x --cov=fast_zero -vv'
+test = 'pytest -s -x --cov=app -vv'
 post_test = 'coverage html'
 
 [build-system]

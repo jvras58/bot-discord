@@ -1,5 +1,6 @@
-from config.base_model import Base
 from sqlalchemy.orm import Mapped, mapped_column
+
+from app.config.base_model import Base
 
 
 class Config_bot(Base):
