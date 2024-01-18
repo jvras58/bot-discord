@@ -12,11 +12,19 @@ async def test_status(basic_commands, interaction):
 # FIXME: CORREÇÃO NO TESTE DO ENVIO DE LINK
 # @pytest.mark.asyncio
 # async def test_linkbot(basic_commands, interaction):
-#     # Cria um objeto AsyncMock para substituir 'avatar.read'
-#     read_mock = AsyncMock(return_value="Imagem")
+#     # Cria uma função assíncrona para substituir 'Asset.read'
+#     async def read_mock():
+#         return BytesIO(b"Imagem")
 
-#     # Usa 'patch' para substituir 'avatar.read' em todos os lugares onde ele é chamado
-#     with patch('discord.User.avatar.read', new=read_mock):
+#     # Cria um objeto MagicMock para substituir 'User.avatar'
+#     avatar_mock = AsyncMock()
+#     avatar_mock.read = read_mock
+
+#     # Cria um objeto PropertyMock para substituir 'User.avatar'
+#     avatar_property_mock = PropertyMock(return_value=avatar_mock)
+
+#     # Usa 'patch' para substituir 'User.avatar' em todos os lugares onde ele é chamado
+#     with patch('discord.User.avatar', new_callable=avatar_property_mock):
 #         await basic_commands.linkbot(interaction)
 #         interaction.response.send_message.assert_called_once()
 #         interaction.user.create_dm.assert_called_once()

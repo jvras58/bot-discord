@@ -130,7 +130,7 @@ def interaction():
     interaction.response.send_message("Olá, mundo!")
     interaction.user.create_dm()
     """
-    interaction = MagicMock()
+    interaction = AsyncMock()
     interaction.response.send_message = AsyncMock()
     interaction.user.create_dm = AsyncMock()
     return interaction

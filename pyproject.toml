@@ -48,6 +48,8 @@ extend_skip = ['migrations']
 
 [tool.pytest.ini_options]
 pythonpath = "."
+#FIXME: import audioop (warnings summary)
+filterwarnings = "ignore::DeprecationWarning"
 
 [tool.blue]
 extend-exclude = '(migrations/|startup.py)'
