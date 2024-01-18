@@ -7,13 +7,32 @@ from discord import app_commands
 
 
 class DmCommands:
+    """
+    Classe que define os comandos relacionados a mensagens diretas (DM).
+    """
+
     def __init__(self, cliente):
+        """
+        Inicializa a classe CanalCommands.
+
+        Args:
+            cliente (objeto): O cliente Discord.
+        """
         self.cliente_discord = cliente
 
     @app_commands.describe(horario='Horário do alerta: %H:%M')
     async def alerta_dm_horario(
         self, interaction: discord.Interaction, horario: str
     ):
+        """
+        Verifica se o usuário está autorizado a usar o comando e, em seguida,
+        Define um alerta para ser disparado em um determinado horário.
+        Salva as alterações no cliente Discord.
+
+        Args:
+            interaction (discord.Interaction): A interação do usuário com o comando.
+            horario (str): O horário do alerta no formato '%H:%M'.
+        """
         authorization_ids = [
             int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
         ]
@@ -38,6 +57,15 @@ class DmCommands:
         )
 
     async def offavisodm(self, interaction: discord.Interaction):
+        """
+        Desativa o aviso de mensagem direta para o usuário.
+
+        Verifica se o usuário está autorizado a usar o comando e, em seguida,
+        desativa o aviso de mensagem direta. Salva as alterações no cliente Discord.
+
+        Args:
+            interaction (discord.Interaction): A interação do usuário com o comando.
+        """
         authorization_ids = [
             int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
         ]
@@ -55,6 +83,15 @@ class DmCommands:
         self.cliente_discord.save()
 
     async def onavisodm(self, interaction: discord.Interaction):
+        """
+        ativa o aviso de mensagem direta para o usuário.
+
+        Verifica se o usuário está autorizado a usar o comando e, em seguida,
+        ativa o aviso de mensagem direta. Salva as alterações no cliente Discord.
+
+        Args:
+            interaction (discord.Interaction): A interação do usuário com o comando.
+        """
         authorization_ids = [
             int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
         ]
@@ -74,6 +111,14 @@ class DmCommands:
     # TODO: discord.User é um objeto que representa um usuário do Discord então na vez de passar diretamente um parametro id eu posso passar um objeto discord.User
     @app_commands.describe(id='identificador do usuário a ser ignorado')
     async def idignore(self, interaction: discord.Interaction, id: str):
+        """Ignora um usuário específico, adicionando seu ID à lista de usuários ignorados.
+
+            Verifica se o usuário está autorizado a usar o comando e, em seguida,
+            adiciona o ID do usuário à lista de ignorados. Salva as alterações no cliente Discord.
+        Args:
+            interaction (discord.Interaction): A interação do usuário com o comando.
+            id (str): identificador do usuário a ser ignorado
+        """
         authorization_ids = [
             int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
         ]
@@ -98,6 +143,15 @@ class DmCommands:
 
     @app_commands.describe(id='identificador do usuário a ser ree-adicionado')
     async def readicionarids(self, interaction: discord.Interaction, id: str):
+        """
+            remove um usuário específico, adicionado à lista de usuários ignorados.
+
+            Verifica se o usuário está autorizado a usar o comando e, em seguida,
+            remove o ID do usuário da lista de ignorados. Salva as alterações no cliente Discord.
+        Args:
+            interaction (discord.Interaction): A interação do usuário com o comando.
+            id (str): identificador do usuário a ser removido
+        """
         authorization_ids = [
             int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
         ]
@@ -131,6 +185,17 @@ class DmCommands:
         *,
         mensagem: str,
     ):
+        """
+        Envia uma mensagem direta para um usuário específico.
+
+        args:
+        interaction (discord.Interaction): A interação do usuário com o comando.
+        user: O usuário para o qual a mensagem será enviada.
+        mensagem: A mensagem a ser enviada.
+
+        Exceções:
+        discord.errors.HTTPException: Caso não seja possível enviar a mensagem para o usuário mencionado.
+        """
         try:
             if user:
                 dm_channel = await user.create_dm()
@@ -148,6 +213,12 @@ class DmCommands:
             )
 
     def load_dm_commands(self, tree):
+        """
+        Carrega os comandos relacionados a mensagens diretas no objeto tree.
+
+        Args:
+            tree: O objeto tree onde os comandos serão carregados.
+        """
         tree.command(
             name='horario_verificar',
             description='Define o horário do verficar checkpoint',

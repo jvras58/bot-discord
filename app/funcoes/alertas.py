@@ -19,7 +19,6 @@ def is_time_to_check_alerta_checkpoint(conector_discord):
     horario_alerta = datetime.strptime(horario_alerta_str, '%H:%M').time()
 
     agora = datetime.now()
-    # print(f'Horário do alerta: {horario_alerta}')
     # print(agora.time())  # Imprime apenas a hora atual, sem a data
 
     return (

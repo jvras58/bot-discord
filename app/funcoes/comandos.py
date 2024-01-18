@@ -199,6 +199,17 @@ async def create_image(
     usuario2: discord.User = None,
     porcentagem: int = None,
 ):
+    """
+    Cria uma imagem combinando os avatares de usuário do Discord.
+
+    Parâmetros:
+    - usuario1: O primeiro usuário do Discord.
+    - usuario2: O segundo usuário do Discord (opcional).
+    - porcentagem: A porcentagem a ser exibida na imagem (opcional).
+
+    Retorna:
+    Um objeto BytesIO contendo a imagem combinada.
+    """
     imagem1 = await usuario1.avatar.read()
     avatar1 = Image.open(io.BytesIO(imagem1)).resize(
         get_settings().AVATAR_SIZE

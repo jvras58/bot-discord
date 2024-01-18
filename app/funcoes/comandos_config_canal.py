@@ -4,13 +4,30 @@ from discord import app_commands
 
 
 class CanalCommands:
+    """
+    Classe responsável por definir os comandos relacionados à configuração de canais.
+    """
+
     def __init__(self, cliente):
+        """
+        Inicializa a classe CanalCommands.
+
+        Args:
+            cliente (objeto): O cliente Discord.
+        """
         self.cliente_discord = cliente
 
     @app_commands.describe(canal='Canal de checkpoint')
     async def canalcheckpoint(
         self, interaction: discord.Interaction, canal: discord.TextChannel
     ):
+        """
+        Define o ID do canal de checkpoint.
+
+        Args:
+            interaction (objeto): A interação do Discord.
+            canal (objeto): O canal de checkpoint.
+        """
         authorization_ids = [
             int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
         ]
@@ -31,6 +48,13 @@ class CanalCommands:
     async def canalplanilha(
         self, interaction: discord.Interaction, canal: discord.TextChannel
     ):
+        """
+        Define o ID do canal da planilha.
+
+        Args:
+            interaction (objeto): A interação do Discord.
+            canal (objeto): O canal da planilha.
+        """
         authorization_ids = [
             int(id) for id in get_settings().AUTHORIZATION_IDS.split(',')
         ]
@@ -48,6 +72,12 @@ class CanalCommands:
         )
 
     def load_channel_commands(self, tree):
+        """
+        Carrega os comandos de canal.
+
+        Args:
+            tree (objeto): A árvore de comandos.
+        """
         tree.command(
             name='canalcheckpoint',
             description='Define o ID do canal de checkpoint',
